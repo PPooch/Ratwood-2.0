@@ -1065,6 +1065,7 @@
 	throwforce = 12	//Not a throwing weapon. Too heavy!
 	icon_angle_wielded = 50
 	wbalance = WBALANCE_HEAVY
+	minstr_req = TRUE//No more speed partizan.
 
 /obj/item/rogueweapon/spear/partizan/getonmobprop(tag)
 	. = ..()

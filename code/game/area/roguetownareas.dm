@@ -581,7 +581,7 @@ GLOBAL_LIST_INIT(roguetown_areas_typecache, typecacheof(/area/rogue/indoors/town
 	icon_state = "cell"
 	spookysounds = SPOOKY_DUNGEON
 	spookynight = SPOOKY_DUNGEON
-	droning_sound = 'sound/music/area/manorgarri.ogg'
+	droning_sound = 'sound/music/area/catacombs.ogg'
 	droning_sound_dusk = null
 	droning_sound_night = null
 	converted_type = /area/rogue/outdoors/exposed/manorgarri

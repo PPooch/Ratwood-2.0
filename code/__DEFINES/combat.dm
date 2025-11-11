@@ -362,6 +362,7 @@ GLOBAL_LIST_INIT(shove_disarming_types, typecacheof(list(
 
 //Weapon values
 #define BLUNT_DEFAULT_PENFACTOR		0
+#define MAUL_DEFAULT_PENFACTOR		-200//So they can nuke armour without issue. A pseudo-rend setup.
 #define INTEG_PARRY_DECAY			1	//Default integrity decay on parry.
 #define INTEG_PARRY_DECAY_NOSHARP	5	//Integrity decay on parry for weapons with no sharpness OR for off-hand parries.
 #define SHARPNESS_ONHIT_DECAY		3	//Sharpness decay on parry.

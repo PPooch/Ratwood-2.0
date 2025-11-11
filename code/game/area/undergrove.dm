@@ -59,6 +59,20 @@
 	ceiling_protected = TRUE
 	deathsight_message = "root-bound caverns"
 
+
+/area/rogue/under/cave/rhgoblinencampment
+	name = "goblin encampment"
+	icon_state = "under"
+	first_time_text = "Lost Encampment"
+	ambientsounds = AMB_BASEMENT
+	ambientnight = AMB_BASEMENT
+	droning_sound = 'sound/music/area/gobcamp.ogg'
+	droning_sound_dusk = null
+	droning_sound_night = null
+	converted_type = /area/rogue/outdoors/dungeon1
+	ceiling_protected = TRUE
+	deathsight_message = "root-bound caverns"
+
 /area/rogue/under/cave/skeletoncrypt
 	name = "skeletoncrypt"
 	icon_state = "under"

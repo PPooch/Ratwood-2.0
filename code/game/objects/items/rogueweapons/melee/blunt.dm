@@ -383,7 +383,6 @@
 	force_wielded = 35
 	smeltresult = /obj/item/ingot/steel
 	smelt_bar_num = 2
-	intdamage_factor = 1
 	wdefense_wbonus = 5
 
 /obj/item/rogueweapon/mace/goden/steel/paalloy
@@ -506,3 +505,124 @@
 	penfactor = 80
 	damfactor = 0.9
 	item_d_type = "stab"
+
+//Mauls. Woe. Most characters will not be able to engage with this, beyond hobbling.
+//Why? The unique strength lockout. The minimum strength is not a suggestion.
+/obj/item/rogueweapon/mace/maul
+	force = 12//Don't one-hand this.
+	force_wielded = 32//-3 compared to grand mace(steel goden). Better intents.
+	possible_item_intents = list(/datum/intent/mace/strike)
+	gripped_intents = list(/datum/intent/maul, /datum/intent/maul/crush, /datum/intent/effect/daze, /datum/intent/effect/hobble)
+	name = "maul"
+	desc = "Who would need something this large? It looks like it was made for tearing down walls, rather than men."
+	icon_state = "sledge"
+	icon = 'icons/roguetown/weapons/64.dmi'
+	wlength = WLENGTH_LONG
+	swingsound = BLUNTWOOSH_HUGE
+	slot_flags = null//No.
+	smelt_bar_num = 2
+	minstr = 14
+	wdefense = 2
+	wdefense_wbonus = 1//3
+	demolition_mod = 1.25//Oh, yes...
+	pixel_y = -16
+	pixel_x = -16
+	inhand_x_dimension = 64
+	inhand_y_dimension = 64
+	dropshrink = 0.6
+	bigboy = TRUE
+	gripsprite = TRUE
+	minstr_req = TRUE//You MUST have the required strength. No exceptions.
+	max_integrity = 300
+
+/obj/item/rogueweapon/mace/maul/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.6,"sx" = -7,"sy" = 2,"nx" = 7,"ny" = 3,"wx" = -2,"wy" = 1,"ex" = 1,"ey" = 1,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = -38,"sturn" = 37,"wturn" = 30,"eturn" = -30,"nflip" = 0,"sflip" = 8,"wflip" = 8,"eflip" = 0)
+			if("wielded")
+				return list("shrink" = 0.6,"sx" = 5,"sy" = -3,"nx" = -5,"ny" = -2,"wx" = -5,"wy" = -1,"ex" = 3,"ey" = -2,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 7,"sturn" = -7,"wturn" = 16,"eturn" = -22,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
+
+/obj/item/rogueweapon/mace/maul/grand
+	name = "grand maul"
+	desc = "You could probably crack a man's spine just by tapping them with this. \
+	Only a lunatic would carry something so heavy, however."
+	icon_state = "cross"
+	force_wielded = 34//-1 compared to grand mace.
+	smeltresult = /obj/item/ingot/steel
+	minstr = 15
+	wdefense_wbonus = 4//6
+	smelt_bar_num = 3
+	max_integrity = 350
+
+//Dwarvish mauls. Unobtanium outside of Grudgebearer. Do not change that.
+/obj/item/rogueweapon/mace/maul/steel
+	name = "dwarvish maul"
+	desc = "An incredibly heavy, oversized hammer. The owner is not compensating, for this maul will do the speaking. \
+	This one has been well balanced, allowing for a weaker wielder to make use of it."
+	icon_state = "dwarfhammer"
+	smeltresult = /obj/item/ingot/steel
+	minstr = 11//+2STR from Grudgebearer Soldier. Should cover this.
+	wdefense_wbonus = 3//5
+	smelt_bar_num = 3//You'll break my heart.
+	max_integrity = 340
+
+/obj/item/rogueweapon/mace/maul/spiked
+	name = "spiked maul"
+	desc = "Covered in spikes, such is the weapon of a Dwarvish smith. \
+	This one has been well balanced, allowing for a weaker wielder to make use of it."
+	icon_state = "spiky"
+	gripped_intents = list(/datum/intent/maul/spiked, /datum/intent/maul/crush, /datum/intent/effect/daze, /datum/intent/effect/hobble)
+	wdefense_wbonus = 2//4
+	minstr = 10//+1STR from Grudgebearer Smith. It should be fine.
+	smelt_bar_num = 3//Please don't...
+	max_integrity = 320
+
+//Intents for the mauls.
+/datum/intent/effect/hobble
+	name = "hobbling strike"
+	icon_state = "incrack"//Temp. Just so it's easy to differentiate.
+	attack_verb = list("hobbles")
+	animname = "strike"
+	hitsound = list('sound/combat/hits/blunt/shovel_hit3.ogg')
+	swingdelay = 6
+	damfactor = 0.8
+	penfactor = MAUL_DEFAULT_PENFACTOR
+	clickcd = CLICK_CD_HEAVY
+	item_d_type = "blunt"
+	intent_effect = /datum/status_effect/debuff/hobbled
+	target_parts = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)//Intentionally leaving out feet. If you know, you know.
+
+/datum/intent/maul
+	name = "strike"
+	blade_class = BCLASS_BLUNT
+	attack_verb = list("strikes", "hammers", "wallops")
+	hitsound = list('sound/combat/hits/blunt/metalblunt (1).ogg', 'sound/combat/hits/blunt/metalblunt (2).ogg', 'sound/combat/hits/blunt/metalblunt (3).ogg')
+	chargetime = 0
+	swingdelay = 0
+	intent_intdamage_factor = 1.3//+.15 from normal mace strike. This is the weapon's purpose.
+	penfactor = MAUL_DEFAULT_PENFACTOR//You're getting FULL armour damage with this.
+	clickcd = CLICK_CD_HEAVY//Take a guess.
+	icon_state = "instrike"
+	item_d_type = "blunt"
+
+/datum/intent/maul/crush
+	name = "crush"
+	blade_class = BCLASS_SMASH
+	attack_verb = list("crushes")
+//	chargetime = 2 SECONDS//Leftover from knockback. Return when that's good.
+	swingdelay = 12//+2 from mace smash. Walk away from it.
+	damfactor = 1.7//Identical to mace smash.
+	intent_intdamage_factor = 1.5//Yeah, that guy? Nuke him.
+	icon_state = "incrush"
+//TODO: Implement knockback that isn't coal. Gutted what I had. This just functioned like old blunt throwing. Not great. - Carl
+//	knockback = TRUE//We making it out of the vale with this one. RAAAAAA
+
+/datum/intent/maul/spiked
+	name = "perforating strike"
+	attack_verb = list("rends", "hammers", "wallops")
+	blade_class = BCLASS_PIERCE//TEAR CHUNKS OFF OF THEM. THROW IT ACROSS THE ROOM.
+	hitsound = list('sound/combat/hits/bladed/genthrust (1).ogg', 'sound/combat/hits/bladed/genthrust (2).ogg')
+	icon_state = "intear"
+
