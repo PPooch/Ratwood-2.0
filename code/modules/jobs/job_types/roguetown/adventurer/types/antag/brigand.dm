@@ -9,7 +9,7 @@
 	subclass_social_rank = SOCIAL_RANK_PEASANT
 	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
 	subclass_stats = list(
-		STATKEY_STR = 4,//have you seen this idiot's starting gear and skill spread??
+		STATKEY_STR = 4,
 		STATKEY_WIL = 2,
 		STATKEY_CON = 2,
 		STATKEY_SPD = 1,
@@ -40,6 +40,10 @@
 
 /datum/outfit/job/roguetown/bandit/brigand/pre_equip(mob/living/carbon/human/H)
 	..()
+	if (!(istype(H.patron, /datum/patron/inhumen/zizo) || istype(H.patron, /datum/patron/inhumen/matthios) || istype(H.patron, /datum/patron/inhumen/graggar) || istype(H.patron, /datum/patron/inhumen/baotha)))
+		to_chat(H, span_warning("My former deity has abandoned me.. Matthios is my new master."))
+		H.set_patron(/datum/patron/inhumen/matthios)
+
 	belt = /obj/item/storage/belt/rogue/leather
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	shirt = /obj/item/clothing/suit/roguetown/shirt/shortshirt/random
@@ -50,13 +54,24 @@
 					/obj/item/natural/cloth = 1,
 					/obj/item/flashlight/flare/torch = 1,
 					)
-	mask = /obj/item/clothing/mask/rogue/facemask/steel
 	neck = /obj/item/clothing/neck/roguetown/coif
 	head = /obj/item/clothing/head/roguetown/helmet/leather/volfhelm
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/hide
 	id = /obj/item/mattcoin
 	H.adjust_blindness(-3)
-	var/weapons = list("Battleaxe & Cudgel","Flail & Shield")
+	var/masks = list(
+		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
+		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"None"
+		)
+	if(H.mind)
+		var/mask_choice = input("What fits your face?", "MASK SELECTION") as anything in masks
+		if(mask_choice != "None")
+			mask = masks[mask_choice]
+	var/weapons = list(
+		"Battleaxe & Cudgel",
+		"Flail & Shield"
+		)
 	if(H.mind)
 		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 		H.set_blindness(0)
@@ -68,8 +83,3 @@
 				backl= /obj/item/rogueweapon/shield/wood
 				beltr = /obj/item/rogueweapon/flail
 
-	if(!istype(H.patron, /datum/patron/inhumen/matthios))
-		var/inputty = input(H, "Would you like to change your patron to Matthios?", "The Transactor calls", "No") as anything in list("Yes", "No")
-		if(inputty == "Yes")
-			to_chat(H, span_warning("My former deity has abandoned me.. Matthios is my new master."))
-			H.set_patron(/datum/patron/inhumen/matthios)

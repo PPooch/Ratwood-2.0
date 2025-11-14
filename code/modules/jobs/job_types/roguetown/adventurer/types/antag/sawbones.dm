@@ -36,7 +36,6 @@
 		to_chat(H, span_warning("My former deity has abandoned me.. Matthios is my new master."))
 		H.set_patron(/datum/patron/inhumen/matthios)
 
-	mask = /obj/item/clothing/mask/rogue/facemask/steel
 	head = /obj/item/clothing/head/roguetown/nightman
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/vest
 	shirt = /obj/item/clothing/suit/roguetown/shirt/shortshirt
@@ -54,6 +53,15 @@
 					/obj/item/flashlight/flare/torch = 1,
 					/obj/item/bedroll = 1,
 					)
+	var/masks = list(
+		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
+		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"None"
+		)
+	if(H.mind)
+		var/mask_choice = input("What fits your face?", "MASK SELECTION") as anything in masks
+		if(mask_choice != "None")
+			mask = masks[mask_choice]
 	if(H.age == AGE_OLD)
 		H.change_stat(STATKEY_SPD, -1)
 		H.change_stat(STATKEY_INT, 1)

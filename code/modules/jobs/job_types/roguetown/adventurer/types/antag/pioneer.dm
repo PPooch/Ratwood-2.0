@@ -23,12 +23,12 @@
 		if(inputty == "Yes")
 			to_chat(H, span_warning("My former deity has abandoned me.. Matthios is my new master."))
 			H.set_patron(/datum/patron/inhumen/matthios)
+
 	belt =	/obj/item/storage/belt/rogue/leather
 	head = /obj/item/clothing/head/roguetown/helmet/kettle
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/councillor //gambeson but black
 	shoes = /obj/item/clothing/shoes/roguetown/boots/armor //toe safety first
-	mask = /obj/item/clothing/mask/rogue/facemask/steel
 	neck = /obj/item/clothing/neck/roguetown/coif
 	gloves = /obj/item/clothing/gloves/roguetown/angle/grenzelgloves/blacksmith
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded
@@ -48,6 +48,15 @@
 		/obj/item/rogueweapon/tongs = 1,
 		/obj/item/rogueweapon/pick/steel
 	)
+	var/masks = list(
+		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
+		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"None"
+		)
+	if(H.mind)
+		var/mask_choice = input("What fits your face?", "MASK SELECTION") as anything in masks
+		if(mask_choice != "None")
+			mask = masks[mask_choice]
 
 	H.adjust_skillrank(/datum/skill/combat/bows, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/crossbows, 3, TRUE)
