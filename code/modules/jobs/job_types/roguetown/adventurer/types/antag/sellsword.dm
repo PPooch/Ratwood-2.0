@@ -7,7 +7,7 @@
 	category_tags = list(CTAG_BANDIT)
 	cmode_music = 'sound/music/cmode/antag/combat_cutpurse.ogg' // cutpurse or deadly shadows...?
 	subclass_social_rank = SOCIAL_RANK_PEASANT
-	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_BLACKBAGGER, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
+	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_BLACKBAGGER)
 	subclass_stats = list(
 		STATKEY_STR = 2,
 		STATKEY_WIL = 2,

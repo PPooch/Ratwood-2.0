@@ -38,12 +38,12 @@
 	cost = 5
 	contains = list(/obj/item/storage/roguebag)
 
-/datum/supply_pack/rogue/tools/scroll
+/datum/supply_pack/rogue/Things/scroll
 	name = "Scroll"
 	cost = 5 // Because you don't always have access to Zennies, you trade them away for favor, remember?
 	contains = list(/obj/item/paper/scroll)
 
-/datum/supply_pack/rogue/food/hardtack
+/datum/supply_pack/rogue/Things/hardtack
 	name = "Hardtack"
 	cost = 10
 	contains = list(/obj/item/reagent_containers/food/snacks/rogue/crackerscooked)
@@ -150,16 +150,6 @@
 // UTILITY //
 //////////////
 
-/datum/supply_pack/rogue/Things/garrote
-	name = "Garrote"
-	cost = 15
-	contains = list(/obj/item/inqarticles/garrote/nonpsy)
-
-/datum/supply_pack/rogue/Things/blackbag
-	name = "Blackbag"
-	cost = 20
-	contains = list(/obj/item/clothing/head/inqarticles/blackbag/nonpsy)
-
 /datum/supply_pack/rogue/Things/rubyband
 	name = "Matthian SCOMSTONE"
 	cost = 20
@@ -175,24 +165,24 @@
 	cost = 30
 	contains = list(/obj/item/bomb/smoke)
 
-/datum/supply_pack/rogue/blackmarket_diplomacy/bomb
+/datum/supply_pack/rogue/Things/bomb
 	name = "Fire Bomb"
-	cost =	50
+	cost =	60
 	contains = list(/obj/item/bomb)
 
 /datum/supply_pack/rogue/Things/blackpowder_stick
     name = "Blackpowder stick"
-    cost = 60
+    cost = 80
     contains = list(/obj/item/tntstick)
 
 /datum/supply_pack/rogue/Things/leathercollar
 	name = "Leather Collar"
-	cost =	50
+	cost =	20
 	contains = list(/obj/item/clothing/neck/roguetown/collar/leather)
 
-/datum/supply_pack/rogue/blackmarket_diplomacy/chainleash
+/datum/supply_pack/rogue/Things/chainleash
 	name = "Chain Leash"
-	cost =	50
+	cost =	20
 	contains = list(/obj/item/leash/chain)
 
 /datum/supply_pack/rogue/Things/lockpicks
@@ -242,10 +232,10 @@
 
 /datum/supply_pack/rogue/Things/grapplinghook
 	name =	"Grappling Hook"
-	cost =	600 // You're better off stealing this.
+	cost =	800 // You're better off stealing this.
 	contains = list(/obj/item/grapplinghook)
 
 /datum/supply_pack/rogue/Things/climbing_gear
 	name = "Climbing Gear"
-	cost = 400 // Really fucking good, you can drop down z-levels and hang there. 
+	cost = 600 // Really fucking good, you can drop down z-levels and hang there. 
 	contains = list(/obj/item/clothing/climbing_gear)

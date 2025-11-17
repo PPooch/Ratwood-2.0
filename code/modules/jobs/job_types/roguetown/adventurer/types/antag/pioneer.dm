@@ -6,7 +6,6 @@
 	outfit = /datum/outfit/job/roguetown/bandit/pioneer
 	category_tags = list(CTAG_BANDIT)
 	maximum_possible_slots = 2 //they aren't on par with hedge knights SO WHY ARE THEY LIMITED GRAHHHHHHHHHHHH
-	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
 	subclass_stats = list(
 		STATKEY_INT = 3,
 		STATKEY_LCK = 2,

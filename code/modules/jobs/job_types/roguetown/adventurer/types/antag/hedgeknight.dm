@@ -8,7 +8,7 @@
 	maximum_possible_slots = 2 //Too many plate armoured fellas is scawy ...
 	cmode_music = 'sound/music/cmode/antag/combat_thewall.ogg' // big chungus gets the wall too
 	subclass_social_rank = SOCIAL_RANK_MINOR_NOBLE
-	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_HEAVYARMOR, TRAIT_BLACKBAGGER, TRAIT_STEELHEARTED, TRAIT_NOBLE, TRAIT_DEATHBYSNUSNU)
+	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_HEAVYARMOR, TRAIT_BLACKBAGGER, TRAIT_NOBLE)
 	subclass_stats = list(
 		STATKEY_CON = 3, //dark souls 3 dual greatshield moment
 		STATKEY_STR = 2,

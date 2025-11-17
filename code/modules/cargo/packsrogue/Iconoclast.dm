@@ -201,3 +201,17 @@
 	name = "Kite Shield"
 	cost = 20
 	contains = list(/obj/item/rogueweapon/shield/tower/metal)
+
+/////////////
+// UTILITY //
+/////////////
+
+/datum/supply_pack/rogue/Iconoclast/garrote
+	name = "Garrote"
+	cost = 15
+	contains = list(/obj/item/inqarticles/garrote/nonpsy)
+
+/datum/supply_pack/rogue/Iconoclast/blackbag
+	name = "Blackbag"
+	cost = 20
+	contains = list(/obj/item/clothing/head/inqarticles/blackbag/nonpsy)
