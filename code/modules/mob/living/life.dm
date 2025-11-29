@@ -43,33 +43,13 @@
 		handle_blood()
 		//passively heal even wounds with no passive healing
 		heal_wounds(1)
-	var/list/wounds = get_wounds()
-	if (islist(wounds))
-		for (var/entry in wounds)
-			// get_wounds() нередко возвращает вложенные списки (по конечностям и т.п.)
-			if (islist(entry))
-				for (var/sub in entry)
-					var/datum/wound/W = sub
-					W?.heal_wound(1)
-			else
-				var/datum/wound/W = entry
-				W?.heal_wound(1)
 
-	/// ENDVRE AS HE DOES.
-	if(!stat && HAS_TRAIT(src, TRAIT_PSYDONITE) && !HAS_TRAIT(src, TRAIT_PARALYSIS))
+	//Psydonites get 0.6, for passive heals. Everyone else gets wound specific passive healing.
+	//You don't heal your wounds if below a certain blood volume, or you're skullcracked. Sorry, buddy.
+	//Death is checked in on_life for wounds, so no need to set it here.
+	//Corpses don't passive heal wounds, unless Psydonite. For some reason.
+	if (blood_volume > BLOOD_VOLUME_SURVIVE && !HAS_TRAIT(src, TRAIT_PARALYSIS))
 		handle_wounds()
-		//passively heal wounds, but not if you're skullcracked OR DEAD.
-	if (blood_volume > BLOOD_VOLUME_SURVIVE)
-		var/list/wounds2 = get_wounds()
-		if (islist(wounds2))
-			for (var/entry in wounds2)
-				if (islist(entry))
-					for (var/sub in entry)
-						var/datum/wound/W2 = sub
-						W2?.heal_wound(0.6)
-				else
-					var/datum/wound/W2 = entry
-					W2?.heal_wound(0.6)
 
 	if(QDELETED(src)) // diseases can qdel the mob via transformations
 		return
