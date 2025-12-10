@@ -6,11 +6,11 @@
 	id = "anthromorphsmall"
 	desc = "<b>Critterkin</b><br>\
 	A race akin to wild-kin, except afflicted with significantly smaller stature. \
-	Sometimes referred to with the derogatory term 'verminfolk' by those that disrespect the small.<br>\
+	Sometimes referred to with the derogatory term 'verminfolk' by those that disrespect those who are small.<br>\
 	(+1 Speed, Keen Ears Trait)"
 
 	expanded_desc = "A race akin to wild-kin, except afflicted with significantly smaller stature. \
-	Sometimes referred to with the derogatory term 'verminfolk' by those that disrespect the small."
+	Sometimes referred to with the derogatory term 'verminfolk' by those that disrespect those who are small."
 	default_color = "444"
 	species_traits = list(
 		MUTCOLORS,
