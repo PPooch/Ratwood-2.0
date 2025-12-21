@@ -257,6 +257,15 @@
 			used = round(damage_dividend * 20 + (dam / 2))
 			if(prob(used))
 				attempted_wounds += /datum/wound/sunder
+	if((bclass in GLOB.charring_bclasses))
+		used = round(damage_dividend * 20 + (dam / 3))
+		if(user && istype(user.rmb_intent, /datum/rmb_intent/strong))
+			dam += 10
+		if(HAS_TRAIT(src, TRAIT_CRITICAL_WEAKNESS))
+			attempted_wounds += /datum/wound/burn/strong
+		if(prob(used))
+			attempted_wounds += /datum/wound/burn
+
 
 	// Check if critical resistance applies
 	var/has_crit_attempt = length(attempted_wounds)
