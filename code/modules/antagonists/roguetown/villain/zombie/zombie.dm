@@ -163,8 +163,22 @@
 		zombie.npc_jump_chance = initial(zombie.npc_jump_chance)
 		zombie.rude = initial(zombie.rude)
 		zombie.tree_climber = initial(zombie.tree_climber)
+		// Remove all vices that were ephemeral (added during zombification)
 		if(zombie.charflaw)
-			zombie.charflaw.ephemeral = FALSE
+			if(zombie.charflaw.ephemeral)
+				// Remove from vices list if present
+				if(zombie.charflaw in zombie.vices)
+					zombie.vices -= zombie.charflaw
+				// Clear the legacy field
+				zombie.charflaw = null
+			else
+				zombie.charflaw.ephemeral = FALSE
+		
+		// Also clean up ephemeral vices from the vices list
+		for(var/datum/charflaw/vice in zombie.vices)
+			if(vice.ephemeral)
+				zombie.vices -= vice
+		
 		zombie.update_body()
 
 		zombie.STASTR = src.STASTR

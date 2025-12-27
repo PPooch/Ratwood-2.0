@@ -267,7 +267,7 @@
 /datum/virtue/utility/secondvoice
 	name = "Second Voice"
 	desc = "From performance, deception, or by a need to change yourself in uncanny ways, you've acquired a second, perfect voice. You may switch between them at any point."
-	custom_text = "Grants access to a new 'Virtue' tab. It will have the options for setting and changing your voice."
+	custom_text = "Grants access to a new 'Memory' tab. It will have the options for setting and changing your voice."
 
 /datum/virtue/utility/secondvoice/apply_to_human(mob/living/carbon/human/recipient)
 	recipient.verbs += /mob/living/carbon/human/proc/changevoice

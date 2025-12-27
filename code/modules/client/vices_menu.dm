@@ -46,6 +46,15 @@
 		if(show_message && user)
 			to_chat(user, span_warning("Bronze Arm (L) virtue conflicts with Bronze Arm (R) virtue - you can't have both bronze arms!"))
 		return TRUE
+	// Giant vs Heightshifting: mutually exclusive
+	if(virtue_type == /datum/virtue/size/giant && other_virtue_type == /datum/virtue/size/heightshifting)
+		if(show_message && user)
+			to_chat(user, span_warning("Giant conflicts with Heightshifting - choose only one size-related virtue!"))
+		return TRUE
+	if(virtue_type == /datum/virtue/size/heightshifting && other_virtue_type == /datum/virtue/size/giant)
+		if(show_message && user)
+			to_chat(user, span_warning("Heightshifting conflicts with Giant - choose only one size-related virtue!"))
+		return TRUE
 	return FALSE
 
 /datum/preferences/proc/check_vice_virtue_conflict(vice_type, show_message = FALSE, mob/user = null)
@@ -1112,9 +1121,27 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 			
 				if(choice)
 					var/datum/charflaw/selected = vices_available[choice]
+					// Get the old vice before replacing
+					var/datum/charflaw/old_vice = vars[slot_var]
+					// Create new vice and set in preferences
 					vars[slot_var] = new selected()
-					to_chat(usr, span_notice("Selected [choice] for vice slot [slot]."))
 					var/datum/charflaw/new_vice = vars[slot_var]
+					
+					// Update the living character's vices immediately
+					if(usr && ishuman(usr))
+						var/mob/living/carbon/human/H = usr
+						// Remove old vice if it exists
+						if(old_vice && (old_vice in H.vices))
+							H.vices -= old_vice
+						// Add new vice to character
+						if(new_vice)
+							H.vices += new_vice
+							new_vice.on_mob_creation(H)
+							// If this is slot 1, also update legacy charflaw field
+							if(slot == 1)
+								H.charflaw = new_vice
+					
+					to_chat(usr, span_notice("Selected [choice] for vice slot [slot]."))
 					if(new_vice.desc)
 						to_chat(usr, "<span class='info'>[new_vice.desc]</span>")
 					save_character()
@@ -1125,7 +1152,20 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					to_chat(usr, span_warning("Vice slot 1 is required and cannot be cleared!"))
 					return
 				
-				vars[slot_var] = null	
+				// Clear the vice from preferences
+				var/datum/charflaw/old_vice = vars[slot_var]
+				vars[slot_var] = null
+				
+				// Update the living character's vices immediately
+				if(usr && ishuman(usr))
+					var/mob/living/carbon/human/H = usr
+					// Remove the old vice from the character's vices list if it exists
+					if(old_vice && (old_vice in H.vices))
+						H.vices -= old_vice
+					// If this was the first slot, also clear the legacy charflaw field
+					if(slot == 1 && H.charflaw == old_vice)
+						H.charflaw = null
+				
 				save_character()
 				open_vices_menu(usr)
 	
