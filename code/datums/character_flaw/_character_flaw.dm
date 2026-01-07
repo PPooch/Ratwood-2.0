@@ -33,7 +33,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	"Annoying Face"=/datum/charflaw/annoying_face,
 	"Eerie Beauty"=/datum/charflaw/eerie_beauty,
 	"Nude Sleeper"=/datum/charflaw/nude_sleeper,
-	/datum/charflaw/mind_broken::name = /datum/charflaw/mind_broken,
+	"Asundered Mind (+1 TRI)"=/datum/charflaw/mind_broken,
 	"Random or No Flaw"=/datum/charflaw/randflaw,
 	"No Flaw (-3 TRIUMPHS)"=/datum/charflaw/noflaw,
 	"Leper (+1 TRIUMPHS)"=/datum/charflaw/leprosy,

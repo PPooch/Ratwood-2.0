@@ -1757,6 +1757,9 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					// Create new vice and set in preferences
 					vars[slot_var] = new selected()
 					var/datum/charflaw/new_vice = vars[slot_var]
+					
+					// Clear legacy charflaw when using new vice system
+					charflaw = null
 
 					// Vices are intentionally not hot-applied to a living in-round character.
 					// They are saved to preferences and applied on the next spawn.
