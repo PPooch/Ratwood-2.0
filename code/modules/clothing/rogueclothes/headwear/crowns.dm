@@ -41,5 +41,3 @@
 	icon_state = "circlet"
 	item_state = "circlet"
 	sellprice = 50
-
-
