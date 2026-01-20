@@ -666,8 +666,7 @@
 		user.client.statpanel = T.name
 
 /mob/proc/CtrlRightClickOn(atom/A, params)
-	linepoint(A, params)
-	return
+	pointed(A)
 
 /*
 	Misc helpers
@@ -827,7 +826,7 @@
 			A.rmb_self(src)
 		else
 			rmb_on(A, params)
-	else if(used_intent.rmb_ranged)
+	else if(used_intent?.rmb_ranged)
 		used_intent.rmb_ranged(A, src) //get the message from the intent
 	changeNext_move(CLICK_CD_RAPID)
 	if(isturf(A.loc))
@@ -869,7 +868,7 @@
 		eyet.update_icon(src)
 
 /mob/proc/ShiftRightClickOn(atom/A, params)
-//	linepoint(A, params)
+//	pointed(A, params)
 //	A.ShiftRightClick(src)
 	return
 

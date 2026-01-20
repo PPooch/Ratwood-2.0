@@ -7,6 +7,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 
 /obj/item
 	name = "item"
+	var/original_name = null // Stores the original name if item was renamed
 	icon = 'icons/obj/items_and_weapons.dmi'
 	///icon state name for inhanf overlays
 	var/item_state = null
@@ -617,6 +618,19 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 			inspec += "[percent]% ([floor(eff_currint)])"
 			if(force >= 5) // Durability is rather obvious for non-weapons
 				inspec += " <span class='info'><a href='?src=[REF(src)];explaindurability=1'>{?}</a></span>"
+		if(istype(src, /obj/item/clothing))	//awful
+			var/obj/item/clothing/C = src
+			var/str
+			switch(C.armor_class)
+				if(ARMOR_CLASS_NONE)
+					str = "None"
+				if(ARMOR_CLASS_LIGHT)
+					str = "Light"
+				if(ARMOR_CLASS_MEDIUM)
+					str = "Medium"
+				if(ARMOR_CLASS_HEAVY)
+					str = "Heavy"
+			inspec += "\n<b>ARMOR CLASS:</b> [str]"
 
 		to_chat(usr, "[inspec.Join()]")
 
@@ -864,7 +878,7 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
 	if((is_silver || smeltresult == /obj/item/ingot/silver) && (HAS_TRAIT(M, TRAIT_SILVER_WEAK) &&  !M.has_status_effect(STATUS_EFFECT_ANTIMAGIC)))
 		var/datum/antagonist/vampire/V_lord = M.mind?.has_antag_datum(/datum/antagonist/vampire/)
-		if(V_lord.generation >= GENERATION_METHUSELAH)
+		if(V_lord?.generation >= GENERATION_METHUSELAH)
 			return
 
 		to_chat(M, span_userdanger("I can't pick up the silver, it is my BANE!"))
@@ -1360,6 +1374,46 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/update_icon()
 	. = ..()
 	update_transform()
+	// Update wearer's appearance if item is equipped (for color changes to show on mob sprites)
+	if(isliving(loc))
+		var/mob/living/L = loc
+		if(L.get_active_held_item() == src || L.get_inactive_held_item() == src)
+			L.update_inv_hands()
+		else if(istype(L, /mob/living/carbon/human))
+			var/mob/living/carbon/human/H = L
+			// Check if item is worn in a slot
+			if(H.head == src)
+				H.update_inv_head()
+			if(H.wear_mask == src)
+				H.update_inv_wear_mask()
+			if(H.wear_neck == src)
+				H.update_inv_neck()
+			if(H.back == src || H.backl == src || H.backr == src)
+				H.update_inv_back()
+			if(H.wear_armor == src)
+				H.update_inv_armor()
+			if(H.wear_pants == src)
+				H.update_inv_pants()
+			if(H.wear_shirt == src)
+				H.update_inv_shirt()
+			if(H.cloak == src)
+				H.update_inv_cloak()
+			if(H.belt == src || H.beltl == src || H.beltr == src)
+				H.update_inv_belt()
+			if(H.gloves == src)
+				H.update_inv_gloves()
+			if(H.shoes == src)
+				H.update_inv_shoes()
+			if(H.glasses == src)
+				H.update_inv_glasses()
+			if(H.ears == src)
+				H.update_inv_ears()
+			if(H.wear_ring == src)
+				H.update_inv_wear_id()
+			if(H.wear_wrists == src)
+				H.update_inv_wrists()
+			if(H.mouth == src)
+				H.update_inv_mouth()
 
 /obj/item/proc/ungrip(mob/living/carbon/user, show_message = TRUE)
 	if(!user)
@@ -1377,6 +1431,10 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 		wdefense_dynamic = wdefense
 	if(altgripped)
 		altgripped = FALSE
+		wielded = FALSE
+		if(force_wielded)
+			update_force_dynamic()
+		wdefense_dynamic = wdefense
 	update_transform()
 	if(user.get_item_by_slot(SLOT_BACK) == src)
 		user.update_inv_back()
@@ -1392,12 +1450,26 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 /obj/item/proc/altgrip(mob/living/carbon/user)
 	if(altgripped)
 		return
+	if(user.get_inactive_held_item())
+		to_chat(user, span_warning("I need a free hand first."))
+		return
+	if(user.get_num_arms() < 2)
+		to_chat(user, span_warning("I don't have enough hands."))
+		return
+	if (obj_broken)
+		to_chat(user, span_warning("It's completely broken."))
+		return
 	altgripped = TRUE
 	update_transform()
 	to_chat(user, span_notice("I wield [src] with an alternate grip"))
 	if(user.get_active_held_item() == src)
 		if(alt_intents)
 			user.update_a_intents()
+			wielded = TRUE
+			if(force_wielded)
+				update_force_dynamic()
+			wdefense_dynamic = (wdefense + wdefense_wbonus)
+			user.update_inv_hands()
 
 /obj/item/proc/wield(mob/living/carbon/user, show_message = TRUE)
 	if(wielded)
@@ -1617,6 +1689,9 @@ GLOBAL_VAR_INIT(rpg_loot_items, FALSE)
 
 /obj/item/examine(mob/user)
 	. = ..()
+	// Show original name if item was renamed
+	if(original_name && original_name != name)
+		. += "<span style='font-size:0.8em;color:#888'>Originally: [original_name]</span>"
 	if(isliving(user))
 		var/mob/living/L = user
 		if(L.STAINT < 9)

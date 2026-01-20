@@ -16,6 +16,13 @@
 	clickcd = 10
 	item_d_type = "slash"
 
+/// For unusually heavy daggers with a strong cutting edge.
+/datum/intent/dagger/cut/heavy
+	name = "heavy cut"
+	damfactor = 1.2
+	penfactor = 20
+	clickcd = 11
+
 /datum/intent/dagger/thrust
 	name = "thrust"
 	icon_state = "instab"
@@ -27,6 +34,11 @@
 	chargetime = 0
 	clickcd = 8
 	item_d_type = "stab"
+
+// A slightly weaker thrust for daggers with a curved blade, or which otherwise aren't very good at stabbing.
+/datum/intent/dagger/thrust/weak
+	name = "lopsided thrust"
+	damfactor = 0.8
 
 /datum/intent/dagger/thrust/pick
 	name = "icepick stab"
@@ -364,15 +376,26 @@
 	icon_state = "pdagger"
 	sheathe_icon = "pdagger"
 
+/obj/item/rogueweapon/huntingknife/idagger/warden_machete
+	possible_item_intents = list(/datum/intent/dagger/thrust/weak, /datum/intent/dagger/cut/heavy, /datum/intent/dagger/chop/cleaver, /datum/intent/dagger/sucker_punch) // Stronger cut and chop, but no pick.
+	force = 22 // Slightly more damage than a steel dagger.
+	max_integrity = 130 // Slightly less integrity than a steel dagger.
+	name = "Wardens' seax"
+	desc = "A well-worn seax utilised by the Fraternity of Wardens both as a tool and weapon. Nearly as effective for hacking \
+	down men as it is foiliage, but not quite as durable as more modern steel tools. More suitable for cutting than for thrusting."
+	icon_state = "warden_machete"
+	sheathe_icon = "warden_machete"
+
 /obj/item/rogueweapon/huntingknife/idagger/steel/corroded/Initialize()
 	. = ..()
 	AddElement(/datum/element/tipped_item)	//Lets you tip your weapon in poison
 
-/obj/item/rogueweapon/huntingknife/idagger/steel/corroded/dirk
+/obj/item/rogueweapon/huntingknife/idagger/steel/dirk
 	name = "fanged dagger"
-	desc = "A dagger modeled after the fang of an anthrax spider. Can be poisoned."
+	desc = "A vicious dagger of drow make with a cruel, curved, fanglike blade."
 	icon_state = "spiderdagger"
 	sheathe_icon = "spiderdagger"
+	force = 22 // Same as elvish dagger
 	smeltresult = null
 
 /obj/item/rogueweapon/huntingknife/idagger/steel/holysee
@@ -420,6 +443,10 @@
 	force = 25
 	max_integrity = 200
 	smeltresult = /obj/item/ingot/steel
+
+/obj/item/rogueweapon/huntingknife/idagger/dtace/Initialize()
+	. = ..()
+	AddElement(/datum/element/tipped_item)	//Lets you tip your weapon in poison
 
 /obj/item/rogueweapon/huntingknife/idagger/steel/parrying
 	name = "steel parrying dagger"
@@ -631,6 +658,28 @@
 	wdefense = 1
 	resistance_flags = FLAMMABLE
 
+/obj/item/rogueweapon/huntingknife/stoneknife/kukri
+	name = "jade kukri"
+	desc = "A kukri made out of jade. Its more of a ceremonial piece than it is an implement of war, its somewhat fragile. Be gentle with it."
+	icon = 'icons/roguetown/gems/gem_jade.dmi'
+	icon_state = "kukri_jade"
+	max_integrity = 75
+	max_blade_int = 50
+	wdefense = 3
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	sellprice = 75
+
+/obj/item/rogueweapon/huntingknife/stoneknife/opalknife
+	name = "opal knife"
+	desc = "A beautiful knife carved out of opal. Its not intended for combat. It's presence is vital in some Crimson Elven ceremonies."
+	icon = 'icons/roguetown/gems/gem_opal.dmi'
+	icon_state = "knife_opal"
+	max_integrity = 75
+	max_blade_int = 50
+	wdefense = 3
+	resistance_flags = FIRE_PROOF | ACID_PROOF
+	sellprice = 105
+
 /obj/item/rogueweapon/huntingknife/idagger/silver/elvish
 	name = "elvish dagger"
 	desc = "This beautiful dagger is of intricate, elvish design. Sharper, too."
@@ -794,6 +843,20 @@
 		added_def = 3,\
 	)
 
+/obj/item/rogueweapon/huntingknife/throwingknife/bauernwehr
+	name = "bauernwehr"
+	desc = "The pilgrim's fondest friend — a short but sharp blade fitted to a wooden handle. Known to Grenzelhoft as the 'bauernwehr', these knives ensure that no labors are without an answer. This knife can be stowed in a boot."
+	icon_state = "throw_knifei"
+	wdefense = 1
+	max_blade_int = 250
+	max_integrity = 250
+	force = 10
+	throwforce = 10
+	throw_speed = 2
+	armor_penetration = 20
+	embedding = list("embedded_pain_multiplier" = 5, "embed_chance" = 75, "embedded_fall_chance" = 10)
+	possible_item_intents = list(/datum/intent/dagger/cut, /datum/intent/dagger/chop/cleaver, /datum/intent/snip, /datum/intent/dagger/sucker_punch)
+
 /obj/item/rogueweapon/huntingknife/scissors
 	possible_item_intents = list(/datum/intent/snip, /datum/intent/dagger/thrust, /datum/intent/dagger/cut)
 	max_integrity = 100
@@ -811,7 +874,7 @@
 	icon_state = "sscissors"
 	smeltresult = /obj/item/ingot/steel
 
-/datum/intent/snip // The salvaging intent! Used only for the scissors for now!
+/datum/intent/snip // The salvaging intent!
 	name = "snip"
 	icon_state = "insnip"
 	chargetime = 0
@@ -1007,7 +1070,7 @@
 			return
 	return ..()
 
-/obj/item/rogueweapon/huntingknife/scissors/attack_obj(obj/O, mob/living/user)
+/obj/item/rogueweapon/huntingknife/attack_obj(obj/O, mob/living/user)
 	if(user.used_intent.type == /datum/intent/snip && istype(O, /obj/item))
 		var/obj/item/item = O
 		if(item.sewrepair && item.salvage_result) // We can only salvage objects which can be sewn!
