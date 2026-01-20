@@ -165,6 +165,10 @@
 				used_time += 3 SECONDS //repairing yourself as a construct is logistically going to be a lot more difficult than someone else doing it for you
 			if(artificer.mind)
 				used_time -= (artificer_skill * 1 SECONDS)
+			if(!(H.mobility_flags & MOBILITY_STAND)) // lil construct is lying down.
+				used_time -= 3 SECONDS
+			
+			used_time = max(0.5 SECONDS, used_time)
 			playsound(loc, 'sound/items/bsmith1.ogg', 100, FALSE)
 			if(!do_mob(artificer, M, used_time))
 				return
