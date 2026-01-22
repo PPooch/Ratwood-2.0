@@ -35,7 +35,7 @@
 	"Half-Hyena", "Half-Deer", "Half-Bear", "Half-Panda", "Half-Coyote",
 	"Half-Moose", "Half-Jackal", "Half-Panther", "Half-Lynx", "Half-Leopard",
 	"Half-Monkey", "Half-Bird", "Half-Seal", "Half-Bat", "Half-Otter", "Half-Cow",
-	"Half-Bull", "Half-Bee", "Half-Lizard", "Half-Monster, Half-Insect"
+	"Half-Bull", "Half-Bee", "Half-Lizard", "Half-Insect", "Half-Monster"
 	)
 
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,STUBBLE,OLDGREY,MUTCOLORS_PARTSONLY)
