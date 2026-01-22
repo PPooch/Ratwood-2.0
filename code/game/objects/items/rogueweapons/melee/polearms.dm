@@ -1437,8 +1437,28 @@
 	if(get_detail_tag())
 		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
 		pic.appearance_flags = RESET_COLOR
-		pic.color = "#FF9900"
+		pic.color = "#FFA500"
 		add_overlay(pic)
+
+/obj/item/rogueweapon/spear/otava/Initialize()
+	. = ..()
+	// toying a bit to see if i can make it be orange and silver, as per otava
+	detail_tag = "_det"
+	detail_color = "#FFA500"
+	if(prob(1)) // Keep variable but force value
+		secondary_color = "#C0C0C0" // Silver for secondary
+	update_icon()
+	GLOB.lordcolor += src
+
+/obj/item/rogueweapon/spear/otava/lordcolor(primary,secondary)
+	// Ignore incoming colors, always use orange and silver
+	detail_tag = "_det"
+	detail_color = "#FFA500"
+	update_icon()
+
+/obj/item/rogueweapon/spear/otava/Destroy()
+	GLOB.lordcolor -= src
+	return ..()
 
 /obj/item/rogueweapon/spear/boar/frei
 	name = "Aavnic lándzsa"
