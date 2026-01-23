@@ -175,7 +175,7 @@
 	title = "The Verses and Acts of the Ten"
 	dat = "gott.json"
 	possible_item_intents = list(
-		/datum/intent/use, 
+		/datum/intent/use,
 		/datum/intent/bless,
 	)
 
