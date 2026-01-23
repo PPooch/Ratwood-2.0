@@ -398,6 +398,14 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Tabard's Shroud, Black"
 	path = /obj/item/clothing/head/roguetown/roguehood/shroudblack
 
+/datum/loadout_item/tabardwhite
+	name = "Tabard, White"
+	path = /obj/item/clothing/suit/roguetown/shirt/robe/tabardwhite
+
+/datum/loadout_item/shroudwhite
+	name = "Tabard's Shroud, White"
+	path = /obj/item/clothing/head/roguetown/roguehood/shroudwhite
+
 /datum/loadout_item/poncho
 	name = "Poncho"
 	path = /obj/item/clothing/cloak/poncho
