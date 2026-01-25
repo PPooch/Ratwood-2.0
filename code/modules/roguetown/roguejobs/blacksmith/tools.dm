@@ -160,6 +160,10 @@
 		return
 	if(!ishuman(M))
 		return
+	if(!isliving(user))
+		return
+	if(user.doing)
+		return
 	if(M.construct)
 		var/mob/living/carbon/human/H = M
 		var/obj/item/bodypart/affecting = H.get_bodypart(check_zone(user.zone_selected))
@@ -179,7 +183,8 @@
 		
 		used_time = max(0.5 SECONDS, used_time)
 
-		while(do_mob(artificer, M, used_time) && (affecting.get_damage() != 0 || length(affecting.wounds)))
+		playsound(loc, 'sound/items/bsmith1.ogg', 100, FALSE)
+		while(do_after(artificer, used_time, target = M, same_direction = TRUE, no_interrupt = FALSE) && (affecting.get_damage() != 0 || length(affecting.wounds)))
 			if(get_dist(artificer, M) >= 2)
 				to_chat(artificer, span_warning("I need to be closer to them to repair them!"))
 				return
