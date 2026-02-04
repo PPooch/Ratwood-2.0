@@ -1,7 +1,3 @@
-// todo
-// add character overlays
-// add pegging sex actions
-
 /obj/item/storage/belt/rogue
 	var/obj/item/dildo/attached_toy = null
 
