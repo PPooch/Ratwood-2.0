@@ -23,6 +23,7 @@
 		return ..()
 	if(!attached_toy)
 		if(user.transferItemToLoc(I, null)) // we're not storing the dildo inside the belt, rather we're moving it to nullspace then restoring it on delete/deattachment
+			user.visible_message(span_warning("[user] equips \the [I] onto \the [initial(name)]."))
 			attached_toy = I
 			playsound(get_turf(user), 'sound/foley/dropsound/food_drop.ogg', 40, TRUE, -1)
 			vis_contents += attached_toy
@@ -38,7 +39,7 @@
 	if(user.get_active_held_item())
 		to_chat(user, span_info("I can't do that with my hand full!"))
 		return
-	to_chat(user, span_info("I remove \the [attached_toy] from \the [initial(name)]"))
+	user.visible_message(span_warning("[user] removes \the [attached_toy] from \the [initial(name)]."))
 	vis_contents -= attached_toy
 	if(!usr.put_in_hands(attached_toy))
 		var/atom/movable/S = attached_toy
