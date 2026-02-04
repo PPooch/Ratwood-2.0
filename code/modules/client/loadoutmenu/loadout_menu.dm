@@ -31,7 +31,7 @@
 	var/datum/asset/spritesheet/spritesheet = get_asset_datum(/datum/asset/spritesheet/loadout_items)
 
 	for(var/datum/loadout_item/item as anything in GLOB.loadout_items)
-		var/obj/item/I = new item.path // used for the spritesheet alone.
+		var/obj/item/I = item.path
 		if(!I)
 			testing("loadout menu: unable to find item with path: [item.path]")
 			continue
@@ -42,7 +42,7 @@
 				donoritem_passed = FALSE // True means it won't show up in the TGUI
 		UNTYPED_LIST_ADD(loadout_items, list(
 			"name" = item.name,
-			"desc" = I.desc,
+			"desc" = initial(I.desc),
 			"triumph_cost" = item.desc, // Don't @ me... this is wack.
 			"nobility_check" = noble_passed, // True means they passed. Returns true on items that don't have the check as well.
 			"donoritem" = donoritem_passed,
