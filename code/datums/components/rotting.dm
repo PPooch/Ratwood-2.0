@@ -52,7 +52,7 @@
 
 	var/mob/living/carbon/C = parent
 	var/is_zombie
-	if(HAS_TRAIT(C, TRAIT_DNR))
+	if(HAS_TRAIT(C, TRAIT_DNR) || is_construct(C))
 		return
 	if(C.mind)
 		if(C.mind.has_antag_datum(/datum/antagonist/zombie))
@@ -68,8 +68,7 @@
 	if (istype(A, /area/rogue/indoors/deathsedge))	//Stops rotting inside Death's Edge (Death's Door spell area)
 		return
 
-	if(is_construct(C))
-		return
+
 
 	if(!(C.mob_biotypes & (MOB_ORGANIC|MOB_UNDEAD)))
 		qdel(src)
