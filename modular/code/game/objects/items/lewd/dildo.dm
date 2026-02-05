@@ -79,6 +79,6 @@
 	sellprice = 30
 
 /obj/item/dildo/gold
-	color = "#A0A075"
+	color = "#c4b651"
 	dildo_material = "golden"
 	sellprice = 50
