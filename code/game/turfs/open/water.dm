@@ -392,7 +392,7 @@
 
 /turf/open/water/sewer/Initialize()
 	icon_state = "paving"
-	water_color = pick("#705a43","#697043")
+	water_color = pick("#705a43","#697043", "#6C6543")
 	.  = ..()
 
 /turf/open/water/swamp
