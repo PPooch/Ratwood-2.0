@@ -25,9 +25,7 @@
 		return FALSE
 
 	if(pulledby && pulledby != src)
-		to_chat(src, span_warning("I'm being grabbed."))
-		changeNext_move(mmb_intent.clickcd)
-		resist_grab()
+		to_chat(src, span_warning("I'm unable to jump while grabbed."))
 		return FALSE
 
 	if(IsOffBalanced())
@@ -46,6 +44,8 @@
 		if(!HAS_TRAIT(src, TRAIT_ZJUMP))
 			to_chat(src, span_warning("That's too high for me..."))
 			return FALSE
+
+	SEND_SIGNAL(src, COMSIG_LIVING_ONJUMP, A)
 
 	changeNext_move(mmb_intent.clickcd)
 

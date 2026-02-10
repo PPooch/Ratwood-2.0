@@ -72,12 +72,14 @@
 				pants = /obj/item/clothing/under/roguetown/chainlegs/iron
 				neck = /obj/item/clothing/neck/roguetown/chaincoif/iron
 				gloves = /obj/item/clothing/gloves/roguetown/chain/iron
+				wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 			if("Iron Breastplate")
 				armor = /obj/item/clothing/suit/roguetown/armor/plate/half/iron
 				neck = /obj/item/clothing/neck/roguetown/coif/heavypadding
 				shirt = /obj/item/clothing/suit/roguetown/shirt/tunic/random
 				pants = /obj/item/clothing/under/roguetown/splintlegs/iron
 				gloves = /obj/item/clothing/gloves/roguetown/angle
+				wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 			if("Gambeson & Helmet")
 				armor = /obj/item/clothing/suit/roguetown/armor/gambeson
 				neck = /obj/item/clothing/neck/roguetown/coif/padded//neck cover
@@ -91,16 +93,15 @@
 				pants = /obj/item/clothing/under/roguetown/trou/leather/pontifex/raneshen
 				head = /obj/item/clothing/head/roguetown/roguehood/shalal/hijab
 				gloves = /obj/item/clothing/gloves/roguetown/angle
+				wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	belt = /obj/item/storage/belt/rogue/leather
 	backl = /obj/item/storage/backpack/rogue/satchel
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
-	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	cloak = /obj/item/clothing/cloak/raincloak/furcloak/brown
 	backpack_contents = list(
 		/obj/item/flashlight/flare/torch = 1,
 		/obj/item/rogueweapon/huntingknife = 1,
-		/obj/item/recipe_book/survival = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
 		)
 
@@ -144,15 +145,15 @@
 				H.adjust_skillrank_up_to(/datum/skill/combat/knives, SKILL_LEVEL_EXPERT, TRUE)
 				r_hand = /obj/item/rogueweapon/huntingknife/idagger/steel
 				beltr = /obj/item/rogueweapon/scabbard/sheath
-	armor = /obj/item/clothing/suit/roguetown/armor/leather
-	head = /obj/item/clothing/head/roguetown/duelhat
+	armor = /obj/item/clothing/armor/leather/jacket/leathercoat/duelcoat
+	head = /obj/item/clothing/head/roguetown/duelisthat
 	mask = /obj/item/clothing/mask/rogue/duelmask
-	cloak = /obj/item/clothing/cloak/half
+	cloak = /obj/item/clothing/cloak/half/duelistcape
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/black
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/nobleboot
 	neck = /obj/item/clothing/neck/roguetown/gorget
 	gloves = /obj/item/clothing/gloves/roguetown/fingerless_leather
 	backl = /obj/item/storage/backpack/rogue/satchel
@@ -161,8 +162,8 @@
 	backpack_contents = list(
 		/obj/item/flashlight/flare/torch = 1,
 		/obj/item/rogueweapon/huntingknife/idagger/steel/parrying = 1,
-		/obj/item/recipe_book/survival = 1,
-		/obj/item/rogueweapon/scabbard/sheath = 1
+		/obj/item/rogueweapon/scabbard/sheath = 1,
+		/obj/item/clothing/ring/duelist = 2
 		)
 
 /datum/advclass/sfighter/barbarian
@@ -250,7 +251,6 @@
 		backl = /obj/item/storage/backpack/rogue/satchel
 	backpack_contents = list(
 		/obj/item/flashlight/flare/torch = 1,
-		/obj/item/recipe_book/survival = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/rogueweapon/huntingknife/bronze = 1,
@@ -325,7 +325,6 @@
 	beltl = /obj/item/flashlight/flare/torch/lantern
 	backpack_contents = list(
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
-		/obj/item/recipe_book/survival = 1,
 		)
 	H.dna.species.soundpack_m = new /datum/voicepack/male/warrior()
 	H.set_blindness(0)
@@ -521,7 +520,6 @@
 	gloves = /obj/item/clothing/gloves/roguetown/angle
 	backpack_contents = list(
 		/obj/item/flashlight/flare/torch/metal = 1,
-		/obj/item/recipe_book/survival = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/rogueweapon/huntingknife = 1, //Ensures that Exorcists who take the Shovel can still butcher wildlife. Minor oversight on my part.

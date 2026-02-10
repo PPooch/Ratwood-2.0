@@ -48,6 +48,16 @@
 	cost = 300
 	contains = list(/obj/item/clothing/head/roguetown/helmet/blacksteel/bucket)
 
+/datum/supply_pack/rogue/Knight/vsallet
+	name = "Visored Sallet"
+	cost = 40
+	contains = list(/obj/item/clothing/head/roguetown/helmet/sallet/visored)
+
+/datum/supply_pack/rogue/Knight/skettle
+	name = "Slitted Kettle Helm"
+	cost = 40
+	contains = list(/obj/item/clothing/head/roguetown/helmet/heavy/knight/skettle)
+
 //////////
 // NECK //
 //////////
@@ -57,19 +67,19 @@
 	cost = 20
 	contains = list(/obj/item/clothing/neck/roguetown/chaincoif)
 
+/datum/supply_pack/rogue/Knight/coif/hpcoif
+	name = "Heavy Padded Coif"
+	cost = 20
+	contains = list(/obj/item/clothing/neck/roguetown/coif/heavypadding)
+
 /datum/supply_pack/rogue/Knight/Bevor
-	name = "Bevor"
+	name = "Steel Bevor"
 	cost = 20
 	contains = list(/obj/item/clothing/neck/roguetown/bevor)
 
-/datum/supply_pack/rogue/Knight/gorget
-	name = "Gorget"
-	cost = 20
-	contains = list(/obj/item/clothing/neck/roguetown/gorget)
-
 /datum/supply_pack/rogue/Knight/sgorget
 	name = "Steel Gorget"
-	cost = 30
+	cost = 20
 	contains = list(/obj/item/clothing/neck/roguetown/gorget/steel)
 
 ///////////
@@ -191,7 +201,12 @@
 /datum/supply_pack/rogue/Knight/lsword
 	name = "Longsword"
 	cost = 20
-	contains = list(/obj/item/rogueweapon/sword/long)
+	contains = list(/obj/item/rogueweapon/sword/long/death)
+
+/datum/supply_pack/rogue/Knight/krieg
+	name = "Kriegmesser"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/sword/long/kriegmesser)
 
 /datum/supply_pack/rogue/Knight/Zweihandersword
 	name = "Zweihander"
@@ -217,6 +232,66 @@
 	name = "Estoc"
 	cost = 50
 	contains = list(/obj/item/rogueweapon/estoc)
+
+/datum/supply_pack/rogue/Knight/steelspear
+	name = "Steel Spear"
+	cost = 55
+	contains = list(/obj/item/rogueweapon/spear/boar)
+
+/datum/supply_pack/rogue/Knight/billhook
+	name = "Billhook"
+	cost = 55
+	contains = list(/obj/item/rogueweapon/spear/billhook)
+
+/datum/supply_pack/rogue/Knight/partizan
+	name = "Partizan"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/spear/partizan)
+
+/datum/supply_pack/rogue/Knight/ebeak
+	name = "Eagle's Beak"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/eaglebeak)
+
+/datum/supply_pack/rogue/Knight/halberd
+	name = "Halberd"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/halberd)
+
+/datum/supply_pack/rogue/Knight/SGaxe
+	name = "Steel Greataxe"
+	cost = 30
+	contains = list(/obj/item/rogueweapon/greataxe/steel)
+
+/datum/supply_pack/rogue/Knight/SDGaxe
+	name = "Steel Double-Headed Greataxe"
+	cost = 50
+	contains = list(/obj/item/rogueweapon/greataxe/steel/doublehead)
+
+/datum/supply_pack/rogue/Knight/grandmace
+	name = "Grand Mace"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/mace/goden/steel)
+
+/datum/supply_pack/rogue/Knight/steelmace
+	name = "Steel Mace"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/mace/steel)
+
+/datum/supply_pack/rogue/Knight/silvermace
+	name = "Silver-plated Mace"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/mace/steel/silver)
+
+/datum/supply_pack/rogue/knight/warhammersteel
+	name = "Steel Warhammer"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/mace/warhammer/steel)
+
+/datum/supply_pack/rogue/knight/warhammersilver
+	name = "Silver Warhammer"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/mace/warhammer/steel/silver)
 
 /////////////
 // SHIELDS //

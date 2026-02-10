@@ -178,14 +178,16 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(saymode && !saymode.handle_message(src, message, language))
 		return
 
-	message = treat_message(message) // unfortunately we still need this
+	message = treat_message(message, language) // unfortunately we still need this
 	var/sigreturn = SEND_SIGNAL(src, COMSIG_MOB_SAY, args)
 	if (sigreturn & COMPONENT_UPPERCASE_SPEECH)
 		message = uppertext(message)
 	if(!message)
 		return
 
-	if(!can_speak_vocal(message))
+	// Allow sign languages and other tongueless speech to bypass the vocal speech check
+	var/using_tongueless_speech = language && (initial(language.flags) & TONGUELESS_SPEECH)
+	if(!can_speak_vocal(message) && !using_tongueless_speech)
 		emote("custom", message = "makes a muffled noise")
 		to_chat(src, span_warning("I can't talk."))
 		return
@@ -400,11 +402,14 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	var/speaker_has_ceiling		= TRUE
 	var/turf/speaker_turf = get_turf(src)
 	var/turf/speaker_ceiling = get_step_multiz(speaker_turf, UP)
+	var/line_of_sight_only = FALSE
+
 	if(speaker_ceiling)
 		if(istransparentturf(speaker_ceiling))
 			speaker_has_ceiling = FALSE
 	if(eavesdropping_modes[message_mode])
 		eavesdrop_range = EAVESDROP_EXTRA_RANGE
+
 	if(message_mode != MODE_WHISPER)
 		Zs_too = TRUE
 		if(say_test(message) == "2")	//CIT CHANGE - ditto
@@ -412,6 +417,14 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			Zs_yell = TRUE
 		if(say_test(message) == "3")	//Big "!!" shout
 			Zs_all = TRUE
+
+	var/area/speaker_area = get_area(src)
+	if(speaker_area && speaker_area.soundproof == TRUE)
+		line_of_sight_only = TRUE
+		Zs_too = FALSE
+		Zs_yell = FALSE
+		Zs_all = FALSE
+	
 	// AZURE EDIT: thaumaturgical loudness (from orisons)
 	if (has_status_effect(/datum/status_effect/thaumaturgy))
 		spans |= SPAN_REALLYBIG
@@ -433,6 +446,10 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 //	var/list/yellareas	//CIT CHANGE - adds the ability for yelling to penetrate walls and echo throughout areas
 	for(var/_M in GLOB.player_list)
 		var/mob/M = _M
+
+		if(line_of_sight_only && !isobserver(M)) // If soundproof area, we only care about hearers_in_view, except observers
+			continue
+
 		var/atom/movable/tocheck = M
 		if(isdullahan(M))
 			var/mob/living/carbon/human/target = M
@@ -476,6 +493,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		var/turf/listener_ceiling = get_step_multiz(listener_turf, UP)
 		if(istype(_AM, /obj/item/listeningdevice)) // Very evil snowflake code.
 			hearall = TRUE
+
 		if(listener_ceiling)
 			listener_has_ceiling = TRUE
 			if(istransparentturf(listener_ceiling))
@@ -602,8 +620,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 				return LD
 	return null
 
-/mob/living/proc/treat_message(message)
-	if(HAS_TRAIT(src, TRAIT_ZOMBIE_SPEECH))
+/mob/living/proc/treat_message(message, language)
+	if(HAS_TRAIT(src, TRAIT_ZOMBIE_SPEECH) && !ispath(language, /datum/language/undead))
 		message = "[repeat_string(rand(1, 3), "U")][repeat_string(rand(1, 6), "H")]..."
 	else if(HAS_TRAIT(src, TRAIT_GARGLE_SPEECH))
 		message = vocal_cord_torn(message)

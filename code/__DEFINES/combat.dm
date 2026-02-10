@@ -49,9 +49,9 @@
 
 #define HEALTH_THRESHOLD_NEARDEATH -90 //Not used mechanically, but to determine if someone is so close to death they hear the other side
 
-// Actually a divisor. Where 1 / this * 100% value of burn damage on lethal zones (Chest & Head) causes you to enter hardcrit. 
+// Actually a divisor. Where 1 / this * 100% value of burn damage on lethal zones (Chest & Head) causes you to enter hardcrit.
 #define FIRE_HARDCRIT_DIVISOR 106 // 106 = 94.5% burn damage = hardcrit
-#define FIRE_HARDCRIT_DIVISOR_MINDLESS 200 // 200 = 50% burn damage = hardcrit for mindless mobs  
+#define FIRE_HARDCRIT_DIVISOR_MINDLESS 200 // 200 = 50% burn damage = hardcrit for mindless mobs
 #define STRENGTH_SOFTCAP 14	//STR value past which we get diminishing returns in our damage calculations.
 #define STRENGTH_MULT 0.1	//STR multiplier per STR point up to the softcap. Works as a %-age. 0.1 = 10% per point.
 #define STRENGTH_CAPPEDMULT 0.034	//STR multiplier per STR point past the softcap
@@ -356,6 +356,10 @@ GLOBAL_LIST_INIT(shove_disarming_types, typecacheof(list(
 //We will round to this value in damage calculations.
 #define DAMAGE_PRECISION 0.1
 
+#define STRONG_STANCE_DMG_BONUS 0.1
+#define STRONG_SHP_BONUS 2
+#define STRONG_INTG_BONUS 2
+
 //bullet_act() return values
 #define BULLET_ACT_HIT				"HIT"		//It's a successful hit, whatever that means in the context of the thing it's hitting.
 #define BULLET_ACT_BLOCK			"BLOCK"		//It's a blocked hit, whatever that means in the context of the thing it's hitting.
@@ -381,3 +385,10 @@ GLOBAL_LIST_INIT(shove_disarming_types, typecacheof(list(
 
 /// Damage multiplier of silver weapons against mobs with TRAIT_SIMPLE_WOUNDS
 #define SILVER_SIMPLEMOB_DAM_MULT 3
+
+//Damage directly applied to a mob, as a percentage, if struck with blunt against armour.
+//This is to permit beating to death full plate guys with clubs. Or making the lucerne viable again.
+#define BLUNT_CHIP_MINUSCULE 0.10	//A flat 10%, meant for oddities. Staves and the like.
+#define BLUNT_CHIP_WEAK 0.20		//A flat 20%, meant for small clubs.
+#define BLUNT_CHIP_STRONG 0.30		//A flat 30%, meant for larger weapons.
+#define BLUNT_CHIP_ABSURD 0.40		//A flat 40%, meant for mauls and hammers.

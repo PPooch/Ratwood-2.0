@@ -70,6 +70,7 @@
 				stress2give = /datum/stressevent/viewsinpunish
 
 	if(body_zone == BODY_ZONE_HEAD)
+		SEND_SIGNAL(C, COMSIG_MOB_DECAPPED)
 		// decaps should happen in two phases: the first one inflicts a spinal column sever, killing them instantly.
 		// if they're already spinal-severed, THEN the head is removed.
 		// extra note: we only do this for mobs with a mind, aka not NPCS. npcs always get insta-decapped as before
@@ -139,6 +140,7 @@
 	var/turf/location = C.loc
 	if(istype(location))
 		C.add_splatter_floor(location)
+		C.add_splatter_wall(user, location, force = 2, spill_amount = 3) //Garunteed at least 2 tile distance of blood spattering on the walls, and up to 3 walls to splat.
 	var/direction = pick(GLOB.cardinals)
 	var/t_range = rand(2,max(throw_range/2, 2))
 	var/turf/target_turf = get_turf(src)
@@ -215,13 +217,15 @@
 	was_owner.bodyparts -= src
 	owner = null
 
-	if(organ_slowdown)
-		was_owner.remove_movespeed_modifier("[src.type]_slow", update = TRUE)
+	if(ishuman(was_owner))
+		var/mob/living/carbon/human/H = was_owner
+		H.body_overlay_cache_key = null
+		H.damage_overlay_cache_key = null
+		H.icon_render_key = null
 
 	update_icon_dropped()
 	was_owner.update_health_hud() //update the healthdoll
-	was_owner.update_body()
-	was_owner.update_hair()
+	was_owner.queue_icon_update(PENDING_UPDATE_BODY)
 	was_owner.update_mobility()
 
 	// drop_location = null happens when a "dummy human" used for rendering icons on prefs screen gets its limbs replaced.
@@ -345,6 +349,8 @@
 	var/mob/living/carbon/C = owner
 	. = ..()
 	if(C && !special)
+		if(HAS_TRAIT_FROM(C, TRAIT_PONYGIRL_RIDEABLE, BODY_ZONE_TAUR))
+			REMOVE_TRAIT(C, TRAIT_PONYGIRL_RIDEABLE, BODY_ZONE_TAUR)
 		if(C.legcuffed)
 			C.legcuffed.forceMove(C.drop_location())
 			C.legcuffed.dropped(C)
@@ -401,6 +407,8 @@
 	moveToNullspace()
 	owner = C
 	C.bodyparts += src
+	if(src.body_zone == BODY_ZONE_TAUR)
+		ADD_TRAIT(C, TRAIT_PONYGIRL_RIDEABLE, BODY_ZONE_TAUR)
 	if(held_index)
 		if(held_index > C.hand_bodyparts.len)
 			C.hand_bodyparts.len = held_index
@@ -433,12 +441,23 @@
 		affecting.remove_wound(dismember_wound)
 
 	update_bodypart_damage_state()
+
+	if(ishuman(C))
+		var/mob/living/carbon/human/H = C
+		H.body_overlay_cache_key = null
+		H.damage_overlay_cache_key = null
+		// Clear limb cache entries for both old and new states in an attempt to prevent orphaned aux_zone overlays >:/
+		var/old_key = H.icon_render_key
+		if(old_key)
+			H.limb_icon_cache -= old_key
+		H.icon_render_key = null
+		var/new_key = H.generate_icon_render_key()
+		H.limb_icon_cache -= new_key
+
 	if(organ_slowdown)
 		C.add_movespeed_modifier("[src.type]_slow", update=TRUE, priority=100, flags=NONE, override=FALSE, multiplicative_slowdown=organ_slowdown, movetypes=GROUND, blacklisted_movetypes=NONE, conflict=FALSE)
 	C.updatehealth()
-	C.update_body()
-	C.update_hair()
-	C.update_damage_overlays()
+	C.queue_icon_update(PENDING_UPDATE_BODY | PENDING_UPDATE_HAIR | PENDING_UPDATE_DAMAGE)	
 	C.update_mobility()
 	return TRUE
 

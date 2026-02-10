@@ -374,6 +374,8 @@
 	else
 		recharge_time = base_recharge_time
 
+	START_PROCESSING(SSfastprocess, src)
+
 /obj/effect/proc_holder/spell/invoked/pomegranate
 	name = "Amaranth Sanctuary"
 	invocations = list("Eora, provide sanctuary for your beauty!")
@@ -604,6 +606,7 @@
 					c.adjustFireLoss(100)
 					c.ignite_mob()
 					c.add_stress(/datum/stressevent/psycurse)
+			SEND_SIGNAL(user, COMSIG_MOB_FELL_TREE)
 			record_featured_stat(FEATURED_STATS_TREE_FELLERS, user)
 			record_round_statistic(STATS_TREES_CUT)
 
@@ -1178,18 +1181,6 @@
 		return FALSE
 
 	var/mob/living/carbon/spirit/underworld_spirit = target.get_spirit()
-
-	if (target.client)
-		if (alert(target, "They are calling for you. Are you ready?", "Revival", "I need to wake up", "Don't let me go") != "I need to wake up")
-			target.visible_message(span_notice("Nothing happens. They are not being let go."))
-			return FALSE
-	else if (underworld_spirit && underworld_spirit.client)
-		if (alert(underworld_spirit, "They are calling for you. Are you ready?", "Revival", "I need to wake up", "Don't let me go") != "I need to wake up")
-			target.visible_message(span_notice("Nothing happens. They are not being let go."))
-			return FALSE
-	else
-		target.visible_message(span_notice("The body shudders, but there's no one to call out to."))
-		return FALSE
 
 	// Perform revival
 	target.adjustOxyLoss(-target.getOxyLoss())

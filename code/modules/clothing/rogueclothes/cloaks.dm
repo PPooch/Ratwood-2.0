@@ -761,7 +761,6 @@
 	nodismemsleeves = TRUE
 	inhand_mod = TRUE
 //	allowed_sex = list(MALE)
-	allowed_race = NON_DWARVEN_RACE_TYPES
 	detail_tag = "_det"
 	detail_color = CLOTHING_AZURE
 
@@ -838,6 +837,7 @@
 	icon_state = "bear_cloak"
 	item_state = "bear_cloak"
 	slot_flags = ITEM_SLOT_BACK_R|ITEM_SLOT_CLOAK
+	allowed_race = CLOTHED_RACES_TYPES
 	salvage_result = /obj/item/natural/hide/cured
 	salvage_amount = 3
 
@@ -848,6 +848,23 @@
 	slot_flags = ITEM_SLOT_BACK_R|ITEM_SLOT_CLOAK
 	salvage_result = /obj/item/natural/hide/cured
 	salvage_amount = 3
+
+/obj/item/clothing/cloak/apron/maid
+	name = "maid apron"
+	desc = "The frilly apron of a housemaster. It has pockets to store small things."
+	detail_color = "_detail"
+	slot_flags = ITEM_SLOT_ARMOR | ITEM_SLOT_CLOAK
+	detail_color = CLOTHING_BLACK
+	icon_state = "maidapron"
+	item_state = "maidapron"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/cloaks.dmi'
+	boobed = FALSE
+	grid_width = 64
+	grid_height = 64
+
+/obj/item/clothing/cloak/apron/maid/Initialize(mapload, ...)
+	. = ..()
+	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
 
 /obj/item/clothing/cloak/apron
 	name = "apron"
@@ -1067,8 +1084,9 @@
 	allowed_race = CLOTHED_RACES_TYPES
 
 /obj/item/clothing/cloak/cape/inquisitor
-	name = "Inquisitors Cloak"
-	desc = "A time honored cloak Valorian design, used by founding clans of the Valorian Lodge"
+	name = "arbiter cloak"
+	desc = "The cloak of an Otavii arbiter, a class of warrior-priests within the Inquisition. \
+	Just as with the owner, the cloak has likely weathered some horrid sights."
 	icon_state = "inquisitor_cloak"
 	icon = 'icons/roguetown/clothing/cloaks.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/onmob/cloaks.dmi'
@@ -1135,6 +1153,20 @@
 	sellprice = 50
 	nodismemsleeves = TRUE
 	salvage_result = /obj/item/natural/fur
+
+/obj/item/clothing/cloak/black_cloak/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
+
+/obj/item/clothing/cloak/black_cloak/dropped(mob/living/carbon/human/user)
+	..()
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+	if(STR)
+		var/list/things = STR.contents()
+		for(var/obj/item/I in things)
+			STR.remove_from_storage(I, get_turf(src))
+
+
 
 /obj/item/clothing/cloak/heartfelt
 	name = "red cloak"
@@ -1254,7 +1286,6 @@
 	desc = "A heavy leather cloak held together by a gilded pin, depicting the Grand Duke's house. The sign of a faithful servant."
 	icon_state = "shadowcloak"
 	color = null
-	allowed_race = NON_DWARVEN_RACE_TYPES
 
 /obj/item/clothing/cloak/thief_cloak
 	name = "rapscallion's shawl"
@@ -1421,6 +1452,18 @@
 	salvage_result = /obj/item/natural/fibers
 	salvage_amount = 2
 
+/obj/item/clothing/cloak/wickercloak/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/storage/concrete/roguetown/cloak)
+
+/obj/item/clothing/cloak/wickercloak/dropped(mob/living/carbon/human/user)
+	..()
+	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
+	if(STR)
+		var/list/things = STR.contents()
+		for(var/obj/item/I in things)
+			STR.remove_from_storage(I, get_turf(src))
+
 /obj/item/clothing/cloak/tribal
 	name = "tribal pelt"
 	desc = "A haphazardly cured pelt of a creecher, thrown on top of one's body or armor, to serve as additional protection against the cold. Itchy."
@@ -1468,7 +1511,6 @@
 	desc = "Chaste, righteous, merciless to the wicked."
 	color = null
 	icon_state = "battlenun"
-	allowed_sex = list(FEMALE)
 	item_state = "battlenun"
 	alternate_worn_layer = TABARD_LAYER
 	body_parts_covered = CHEST|GROIN
@@ -1628,62 +1670,6 @@
 	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
 	sleeved = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
-
-/obj/item/clothing/neck/roguetown/blkknight
-	name = "dragonscale necklace" //Who the hell put a NECKLACE in the CLOAKS file?
-	desc = "A blacksteel chain, laced through a dozen of the Hoardmaster's golden teeth. Atuned to the beating heart of Psydonia's financial systems, its true strength can only be harnessed by those who covet wealth above all else."
-	icon_state = "bktrinket"
-	max_integrity = 666 //Exceptionally strong, can be purchased multiple times, and provides a flat +2 to the entire statblock. If it gets destroyed in a fight, that's fair game. Reduced from the original value of 100,000.
-	armor = ARMOR_DRAGONSCALE
-	prevent_crits = list(BCLASS_CUT,BCLASS_BLUNT)
-	blocksound = PLATEHIT
-	icon = 'icons/roguetown/clothing/special/blkknight.dmi'
-	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/blkknight.dmi'
-	//dropshrink = 0.75
-	resistance_flags = FIRE_PROOF
-	sellprice = 666
-	static_price = TRUE
-	smeltresult = /obj/item/riddleofsteel
-	anvilrepair = /datum/skill/craft/armorsmithing
-	var/active_item = FALSE
-
-/obj/item/clothing/neck/roguetown/blkknight/equipped(mob/living/user, slot)
-	. = ..()
-	if(active_item)
-		return
-	if(slot == SLOT_NECK)
-		active_item = TRUE
-		if(user.mind.special_role == "Bandit")
-			to_chat(user, span_notice("I feel bolstered by Matthios' Power!"))
-			user.change_stat(STATKEY_STR, 2)
-			user.change_stat(STATKEY_PER, 2)
-			user.change_stat(STATKEY_INT, 2)
-			user.change_stat(STATKEY_CON, 2)
-			user.change_stat(STATKEY_WIL, 2)
-			user.change_stat(STATKEY_SPD, 2)
-			user.change_stat(STATKEY_LCK, 2)
-			armor = getArmor("blunt" = 100, "slash" = 100, "stab" = 100, "piercing" = 100, "fire" = 50, "acid" = 0)
-		else
-			to_chat(user, span_suicide("As I don the necklace, I feel my very worth draining away.."))
-			armor = getArmor("blunt" = 0, "slash" = 0, "stab" = 0, "piercing" = 0, "fire" = 0, "acid" = 0)
-
-/obj/item/clothing/neck/roguetown/blkknight/dropped(mob/living/user)
-	..()
-	if(!active_item)
-		return
-	active_item = FALSE
-	if(user.mind.special_role == "Bandit")
-		to_chat(user, span_monkeyhive("Golden sparks flutter from the teeth, before they fade away - and with it, the blessing of Matthios.."))
-		user.change_stat(STATKEY_STR, -2)
-		user.change_stat(STATKEY_PER, -2)
-		user.change_stat(STATKEY_INT, -2)
-		user.change_stat(STATKEY_CON, -2)
-		user.change_stat(STATKEY_WIL, -2)
-		user.change_stat(STATKEY_SPD, -2)
-		user.change_stat(STATKEY_LCK, -2)
-	else
-		to_chat(user, span_suicide("..dripping down from the heavens, I feel my worth returning once more.."))
-		armor = getArmor("blunt" = 100, "slash" = 100, "stab" = 100, "piercing" = 100, "fire" = 50, "acid" = 0)
 
 /obj/item/clothing/suit/roguetown/armor/plate/blkknight
 	slot_flags = ITEM_SLOT_ARMOR
@@ -2047,3 +2033,10 @@
 		if(get_detail_color())
 			pic.color = get_detail_color()
 		add_overlay(pic)
+
+/obj/item/clothing/cloak/half/duelistcape
+	name = "duelist cape"
+	desc = "A short cape favored by duelists."
+	icon_state = "duelistcape"
+	item_state = "duelistcape"
+	color = null

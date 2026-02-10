@@ -17,8 +17,12 @@
 	var/mob/living/carbon/grabbee
 	var/list/dependents = list()
 	var/handaction
-	var/bleed_suppressing = 0.25 //multiplier for how much we suppress bleeding, can accumulate so two grabs means 50% less bleeding; each grab being 25% basically.
+	var/bleed_suppressing = 0.75 //multiplier for how much we suppress bleeding, can accumulate so two grabs means 50% less bleeding; each grab being 25% basically.
 	var/chokehold = FALSE
+
+/obj/item/grabbing/intercept_zImpact(atom/movable/AM, levels = 1) // with this shit it doesn't generate "X falls through open space". thank u guppyluxx
+    . = ..()
+    . |= FALL_NO_MESSAGE
 
 /atom/movable //reference to all obj/item/grabbing
 	var/list/grabbedby = list()
@@ -207,7 +211,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(5))
+			if(user.badluck(2))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -238,7 +242,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(10))
+			if(user.badluck(4))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -285,7 +289,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(5))
+			if(user.badluck(2))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -297,7 +301,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(10))
+			if(user.badluck(4))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -309,7 +313,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(10))
+			if(user.badluck(4))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -322,7 +326,7 @@
 			if(user.buckled)
 				to_chat(user, span_warning("I can't do this while buckled!"))
 				return FALSE
-			if(user.badluck(10))
+			if(user.badluck(4))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -359,7 +363,7 @@
 						M.visible_message(span_danger("[user] pins [M] to the ground!"), \
 							span_userdanger("[user] pins me to the ground!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
 			else
-				if(user.badluck(10))
+				if(user.badluck(4))
 					badluckmessage(user)
 					user.stop_pulling()
 					return FALSE
@@ -372,7 +376,7 @@
 					M.visible_message(span_warning("[user] tries to shove [M]!"), \
 									span_danger("[user] tries to shove me!"), span_hear("I hear a sickening sound of pugilism!"), COMBAT_MESSAGE_RANGE)
 		if(/datum/intent/grab/disarm)
-			if(user.badluck(10))
+			if(user.badluck(4))
 				badluckmessage(user)
 				user.stop_pulling()
 				return FALSE
@@ -417,7 +421,7 @@
 				return
 
 /obj/item/grabbing/proc/twistlimb(mob/living/user) //implies limb_grabbed and sublimb are things
-	if(user.badluck(5))
+	if(user.badluck(2))
 		badluckmessage(user)
 		user.stop_pulling()
 		return
@@ -433,7 +437,13 @@
 			return
 	playsound(C.loc, "genblunt", 100, FALSE, -1)
 	C.next_attack_msg.Cut()
-	C.apply_damage(damage, BRUTE, limb_grabbed, armor_block)
+	if(isdoll(C)) 
+		armor_block = C.getarmor(sublimb_grabbed, "blunt")
+		if(armor_block > 1)
+			C.apply_damage(damage, BRUTE, limb_grabbed, armor_block)
+	else 
+		armor_block = C.run_armor_check(limb_grabbed, "blunt")
+		C.apply_damage(damage, BRUTE, limb_grabbed, armor_block)
 	limb_grabbed.bodypart_attacked_by(BCLASS_TWIST, damage, user, sublimb_grabbed, crit_message = TRUE)
 	limb_grabbed.bodypart_attacked_by(BCLASS_TWIST, damage, user, sublimb_grabbed, crit_message = TRUE)
 	C.visible_message(span_danger("[user] twists [C]'s [parse_zone(sublimb_grabbed)]![C.next_attack_msg.Join()]"), \
@@ -450,6 +460,35 @@
 		var/text = "[bodyzone2readablezone(user.zone_selected)]..."
 		user.filtered_balloon_alert(TRAIT_COMBAT_AWARE, text)
 
+	if(limb_grabbed.body_zone == sublimb_grabbed && isdoll(C))
+		var/mob/living/carbon/human/target = C
+		armor_block = target.getarmor(sublimb_grabbed, "slash")
+		
+		if(armor_block >= 1)
+			target.visible_message(span_danger("[target]'s [parse_zone(sublimb_grabbed)] fails to be twisted off!"), \
+				span_danger("[user] tries to twist my [parse_zone(sublimb_grabbed)] out of it's socket but the armor keeps it in place!"))
+			to_chat(user, span_warning("[target]'s [parse_zone(sublimb_grabbed)] stays in it's socket because of [target]'s armor!"))
+			return
+
+		target.visible_message(span_danger("[target]'s [parse_zone(sublimb_grabbed)] is being forcefully popped out of socket!"), \
+			span_danger("My [parse_zone(sublimb_grabbed)] is being forcefully popped out of socket!"))
+		to_chat(user, span_warning("I begin popping [target]'s [parse_zone(sublimb_grabbed)] out of socket."))
+
+		var/delay = (sublimb_grabbed == BODY_ZONE_HEAD) ? 100 : 6
+		
+		if(do_after(user, delay, target = target))
+			target.visible_message(span_danger("[target]'s [parse_zone(sublimb_grabbed)] has been popped out of socket!"), \
+				span_userdanger("My [parse_zone(sublimb_grabbed)] has been popped out of socket!"))
+			to_chat(user, span_warning("I pop [target]'s [parse_zone(sublimb_grabbed)] out of socket."))
+
+			limb_grabbed.drop_limb(FALSE)
+
+			if(QDELETED(limb_grabbed))
+				return
+
+			qdel(src)
+			user.put_in_active_hand(limb_grabbed)
+      
 	// Dealing damage to the head beforehand is intentional.
 	if(limb_grabbed.body_zone == BODY_ZONE_HEAD && isdullahan(C))
 		var/mob/living/carbon/human/target = C
@@ -457,7 +496,7 @@
 		var/obj/item/equipped_nodrop = target_species.get_nodrop_head()
 		if(equipped_nodrop)
 			target.visible_message(span_danger("[target]'s head fails to be twisted off!"), \
-				span_danger("[user] Tries to twist my head off but the [equipped_nodrop.name] keeps it bound to my neck!"))
+				span_danger("[user] tries to twist my head off but the [equipped_nodrop.name] keeps it bound to my neck!"))
 			to_chat(user, span_warning("[target]'s head stays bound to their neck because of the [equipped_nodrop.name]!"))
 			return
 
@@ -549,7 +588,7 @@
 /obj/item/grabbing/attack_turf(turf/T, mob/living/user)
 	if(!valid_check())
 		return
-	if(user.badluck(5))
+	if(user.badluck(2))
 		badluckmessage(user)
 		user.stop_pulling()
 		return
@@ -585,7 +624,7 @@
 /obj/item/grabbing/attack_obj(obj/O, mob/living/user)
 	if(!valid_check())
 		return
-	if(user.badluck(5))
+	if(user.badluck(2))
 		badluckmessage(user)
 		user.stop_pulling()
 		return
@@ -605,7 +644,7 @@
 
 
 /obj/item/grabbing/proc/smashlimb(atom/A, mob/living/user) //implies limb_grabbed and sublimb are things
-	if(user.badluck(10))
+	if(user.badluck(4))
 		badluckmessage(user)
 		user.stop_pulling()
 		return

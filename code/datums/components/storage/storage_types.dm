@@ -5,6 +5,10 @@
 	screen_max_rows = 4
 	max_w_class = WEIGHT_CLASS_NORMAL
 
+/datum/component/storage/concrete/roguetown/satchelshort
+	screen_max_rows = 3
+	max_w_class = WEIGHT_CLASS_NORMAL
+
 /datum/component/storage/concrete/roguetown/backpack
 	screen_max_rows = 7
 	screen_max_columns = 5
@@ -23,7 +27,7 @@
 	/obj/item/needle,
 	/obj/item/natural/worms/leech,
 	/obj/item/reagent_containers/lux,
-	/obj/item/natural/bundle/cloth,
+	/obj/item/natural/bundle/cloth/bandage,
 	/obj/item/natural/cloth))
 
 /datum/component/storage/concrete/roguetown/messkit

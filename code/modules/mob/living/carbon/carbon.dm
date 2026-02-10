@@ -59,6 +59,7 @@
 	AdjustKnockdown(levels * 20)
 
 /mob/living/carbon/swap_hand(held_index)
+	SEND_SIGNAL(src, COMSIG_CARBON_SWAPHANDS)
 	if(!held_index)
 		held_index = (active_hand_index % held_items.len)+1
 
@@ -85,8 +86,6 @@
 		H = hud_used.action_intent
 	oactive = FALSE
 	update_a_intents()
-
-	givingto = null
 
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
@@ -158,26 +157,14 @@
 		var/mob/living/carbon/victim = hit_atom
 		if(victim.movement_type & FLYING)
 			return
-		if(cmode && m_intent == MOVE_INTENT_RUN)
-			if(ishuman(src))
-				var/mob/living/carbon/human/H = src
-				if(!get_active_held_item())
-					var/grabprob
-					if(dir != turn(get_dir(victim, src), 180))
-						grabprob = 100
-					else
-						grabprob = ((get_stat(STATKEY_LCK) - 10) * 10) + ((get_stat(STATKEY_SPD) - 10) * 10) + ((get_stat(STATKEY_PER) - 10) * 10)
-						if(prob(grabprob))
-							H.dna?.species?.grab(H, victim)
-							visible_message("<span class='danger'>[src] leaps onto [victim]!",\
-								"<span class='danger'>I leap onto [victim]!</span>")
-							return
 		if(hurt)
 			victim.take_bodypart_damage(10,check_armor = TRUE)
 			take_bodypart_damage(10,check_armor = TRUE)
+			if(victim.IsOffBalanced())
+				victim.Knockdown(30)
 			visible_message("<span class='danger'>[src] crashes into [victim]!",\
 				"<span class='danger'>I violently crash into [victim]!</span>")
-			playsound(src,"genblunt",100,TRUE)
+		playsound(src,"genblunt",100,TRUE)
 
 
 
@@ -294,8 +281,7 @@
 		return TRUE
 	if(pulledby && !ignore_grab)
 		if(pulledby != src)
-			if(pulledby.grab_state >= GRAB_AGGRESSIVE)
-				return TRUE
+			return TRUE
 
 /mob/living/carbon/proc/canBeHandcuffed()
 	return 0
@@ -607,6 +593,7 @@
 /mob/living/carbon
 	var/nausea = 0
 	var/pain_threshold = 0
+	var/bleeding_tier = 0
 
 /mob/living/carbon/proc/add_nausea(amt)
 	nausea = clamp(nausea + amt, 0, 300)
@@ -870,6 +857,9 @@
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_ZIZOVISION)
 		see_in_dark = max(see_in_dark, 8)
 
+	if(HAS_TRAIT(src, TRAIT_NOCSIGHT))
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_NOCVISION)
+
 	if(see_override)
 		see_invisible = see_override
 	. = ..()
@@ -905,7 +895,7 @@
 
 /mob/living/carbon/get_permeability_protection(list/target_zones = list(HANDS,CHEST,GROIN,LEGS,FEET,ARMS,HEAD))
 	var/list/tally = list()
-	for(var/obj/item/I in get_equipped_items())
+	for(var/obj/item/I as anything in get_equipped_items())
 		for(var/zone in target_zones)
 			if(I.body_parts_covered & zone)
 				tally["[zone]"] = max(1 - I.permeability_coefficient, target_zones["[zone]"])
@@ -1127,13 +1117,12 @@
 	update_hud_handcuffed()
 	update_mobility()
 
-/mob/living/carbon/fully_heal(admin_revive = FALSE)
+/mob/living/carbon/fully_heal(admin_revive = FALSE, break_restraints = FALSE)
 	if(reagents)
 		reagents.clear_reagents()
 		for(var/addi in reagents.addiction_list)
 			reagents.remove_addiction(addi)
-	for(var/O in internal_organs)
-		var/obj/item/organ/organ = O
+	for(var/obj/item/organ/organ as anything in internal_organs)
 		organ.setOrganDamage(0)
 	var/obj/item/organ/brain/B = getorgan(/obj/item/organ/brain)
 	if(B)
@@ -1149,12 +1138,13 @@
 		suiciding = FALSE
 		regenerate_limbs()
 		regenerate_organs()
+		if(reagents)
+			reagents.addiction_list = list()
+	if(break_restraints)
 		handcuffed = initial(handcuffed)
 		for(var/obj/item/restraints/R in contents) //actually remove cuffs from inventory
 			qdel(R)
 		update_handcuffed()
-		if(reagents)
-			reagents.addiction_list = list()
 	cure_all_traumas(TRAUMA_RESILIENCE_MAGIC)
 	..()
 	// heal ears after healing traits, since ears check TRAIT_DEAF trait
@@ -1172,8 +1162,7 @@
 	if(QDELETED(src))
 		return
 	var/organs_amt = 0
-	for(var/X in internal_organs)
-		var/obj/item/organ/O = X
+	for(var/obj/item/organ/O as anything in internal_organs)
 		if(prob(50))
 			organs_amt++
 			O.Remove(src)
@@ -1183,8 +1172,7 @@
 
 /mob/living/carbon/extinguish_mob(itemz = TRUE)
 	if(itemz)
-		for(var/X in get_equipped_items())
-			var/obj/item/I = X
+		for(var/obj/item/I as anything in get_equipped_items())
 			if(I.extinguishable)
 				I.extinguish() //extinguishes our clothes
 			I.acid_level = 0 //washes off the acid on our clothes
@@ -1228,8 +1216,7 @@
 		I.Insert(src)
 
 /mob/living/carbon/proc/update_disabled_bodyparts()
-	for(var/B in bodyparts)
-		var/obj/item/bodypart/BP = B
+	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		BP.update_disabled()
 
 /mob/living/carbon/vv_get_dropdown()
@@ -1252,13 +1239,13 @@
 			return
 		var/list/limb_list = list()
 		if(edit_action == "remove" || edit_action == "augment")
-			for(var/obj/item/bodypart/B in bodyparts)
+			for(var/obj/item/bodypart/B as anything in bodyparts)
 				limb_list += B.body_zone
 			if(edit_action == "remove")
 				limb_list -= BODY_ZONE_CHEST
 		else
 			limb_list = list(BODY_ZONE_HEAD, BODY_ZONE_L_ARM, BODY_ZONE_R_ARM, BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)
-			for(var/obj/item/bodypart/B in bodyparts)
+			for(var/obj/item/bodypart/B as anything in bodyparts)
 				limb_list -= B.body_zone
 		var/result = input(usr, "Please choose which body part to [edit_action]","[capitalize(edit_action)] Body Part") as null|anything in sortList(limb_list)
 		if(result)
@@ -1383,3 +1370,4 @@
 	if((cmode) && (mind) && (!handcuffed) && (stat == CONSCIOUS))
 		return 0
 	. = ..()
+

@@ -215,7 +215,9 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/datum/admins/proc/create_or_modify_area,
 	/client/proc/returntolobby,
 	/client/proc/set_tod_override,
-	/client/proc/stresstest_chat
+	/client/proc/stresstest_chat,
+	/client/proc/performance_stress_test, // Uncomment these if you tick the performance stress test .dm file
+	/client/proc/cleanup_stress_test_mobs
 	)
 GLOBAL_LIST_INIT(admin_verbs_possess, list(/proc/possess, GLOBAL_PROC_REF(release)))
 GLOBAL_PROTECT(admin_verbs_possess)
@@ -748,7 +750,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 /client/proc/togglebuildmodeself()
 	set name = "Toggle Build Mode"
 	set category = "-Special Verbs-"
-	if (!(holder.rank.rights & R_BUILD))
+	if (!holder || !(holder.rank.rights & R_BUILD))
 		return
 	if(src.mob)
 		togglebuildmode(src.mob)

@@ -164,6 +164,8 @@
 		return 1
 	if(isliving(mover))
 		var/mob/living/M = mover
+		if(M.movement_type & FLYING)
+			return 1
 		if(!(M.mobility_flags & MOBILITY_STAND))
 			if(pass_crawl)
 				return TRUE
@@ -430,6 +432,20 @@
 	density = FALSE
 	opacity = FALSE
 
+/obj/structure/bars/passage/shutter/hidden/redstone_triggered()
+	if(obj_broken)
+		return
+	if(density)
+		icon_state = "shutter1"
+		density = FALSE
+		opacity = FALSE
+		alpha = 60
+	else
+		icon_state = "shutter0"
+		density = TRUE
+		opacity = TRUE
+		alpha = 255
+
 /obj/structure/bars/passage/attackby(obj/item/I, mob/user, params)
 	. = ..()
 	var/obj/item = user.get_active_held_item()
@@ -531,13 +547,6 @@
 	attacked_sound = list('sound/combat/hits/onmetal/grille (1).ogg', 'sound/combat/hits/onmetal/grille (2).ogg', 'sound/combat/hits/onmetal/grille (3).ogg')
 	var/togg = FALSE
 	smeltresult = /obj/item/ingot/bronze
-
-/obj/structure/bars/pipe/left
-	name = "bronze pipe"
-	desc = ""
-	icon_state = "pipe2"
-	dir = WEST
-	pixel_x = 19
 
 //===========================
 
@@ -793,7 +802,17 @@
 		if(!user.is_literate())
 			to_chat(user, span_warning("I do not know how to write."))
 			return
+		var/can_write = FALSE
 		if((user.used_intent.blade_class == BCLASS_STAB) && (W.wlength == WLENGTH_SHORT))
+			can_write = TRUE
+		if(istype(W, /obj/item/natural/thorn))
+			can_write = TRUE
+		if(istype(W, /obj/item/natural/feather))
+			can_write = TRUE
+		if(istype(W, /obj/item/rogueore/coal))
+			can_write = TRUE
+
+		if(can_write)
 			if(wrotesign)
 				to_chat(user, span_warning("Something is already carved here."))
 				return
@@ -803,7 +822,7 @@
 					wrotesign = inputty
 					icon_state = "signwrote"
 		else
-			to_chat(user, span_warning("Alas, this will not work. I could carve words, if I stabbed at this with something posessing a short, sharp point. A knife comes to mind."))
+			to_chat(user, span_warning("Alas, this will not work. I could carve words, if I stabbed at this with something posessing a short, sharp point. A knife, thorn, feather or even coal comes to mind."))
 			return
 	..()
 
@@ -985,32 +1004,37 @@
 		if(W.associated_skill)
 			if(user.mind)
 				if(isliving(user))
+					if(user.doing)
+						return
 					var/mob/living/L = user
-					var/probby = (L.STALUC / 10) * 100
-					probby = min(probby, 99)
-					user.changeNext_move(CLICK_CD_MELEE)
-					if(W.max_blade_int)
-						W.remove_bintegrity(5)
-					L.stamina_add(rand(4,6))
-					if(!(L.mobility_flags & MOBILITY_STAND))
-						probby = 0
-					if(L.STAINT < 3)
-						probby = 0
-					if(prob(probby) && !user.buckled)
-						user.visible_message(span_info("[user] trains on [src]!"))
-						var/amt2raise = L.STAINT * 0.35
+					user.visible_message(span_notice("[user] begins training on [src]..."))
+					while(do_after(user, 1 SECONDS, target = src))
+						if(!(L.mobility_flags & MOBILITY_STAND))
+							to_chat(user, span_warning("You are knocked down and stop training."))
+							break
+						var/probby = (L.STALUC / 10) * 100
+						probby = min(probby, 99)
+						user.changeNext_move(CLICK_CD_MELEE)
+						if(W.max_blade_int)
+							W.remove_bintegrity(5)
+						L.stamina_add(rand(4,6))
+						if(L.STAINT < 3)
+							probby = 0
 						if(!can_train_combat_skill(user, W.associated_skill, SKILL_LEVEL_APPRENTICE))
 							to_chat(user, span_warning("I've learned all I can from doing this, it's time for the real thing."))
-							amt2raise = 0
-						if(amt2raise > 0)
-							user.mind.add_sleep_experience(W.associated_skill, amt2raise, FALSE)
-						playsound(loc,pick('sound/combat/hits/onwood/education1.ogg','sound/combat/hits/onwood/education2.ogg','sound/combat/hits/onwood/education3.ogg'), rand(50,100), FALSE)
-					else
-						user.visible_message(span_danger("[user] trains on [src], but [src] ripostes!"))
-						L.AdjustKnockdown(1)
-						L.throw_at(get_step(L, get_dir(src,L)), 2, 2, L, spin = FALSE)
-						playsound(loc, 'sound/combat/hits/kick/stomp.ogg', 100, TRUE, -1)
-					flick(pick("p_dummy_smashed","p_dummy_smashedalt"),src)
+							break
+						if(prob(probby) && !user.buckled)
+							user.visible_message(span_info("[user] trains on [src]!"))
+							var/amt2raise = L.STAINT * 0.35
+							if(amt2raise > 0)
+								user.mind.add_sleep_experience(W.associated_skill, amt2raise, FALSE)
+							playsound(loc,pick('sound/combat/hits/onwood/education1.ogg','sound/combat/hits/onwood/education2.ogg','sound/combat/hits/onwood/education3.ogg'), rand(50,100), FALSE)
+						else
+							user.visible_message(span_danger("[user] trains on [src], but [src] ripostes!"))
+							L.AdjustKnockdown(1)
+							L.throw_at(get_step(L, get_dir(src,L)), 2, 2, L, spin = FALSE)
+							playsound(loc, 'sound/combat/hits/kick/stomp.ogg', 100, TRUE, -1)
+						flick(pick("p_dummy_smashed","p_dummy_smashedalt"),src)
 					return
 	..()
 
@@ -1034,9 +1058,12 @@
 
 /obj/structure/fluff/statue/evil
 	name = "idol"
-	desc = "A statue built to the robber-god, Matthios, who stole the gift of fire from the underworld. It is said that he grants the wishes of those pagan bandits (free folk) who feed him money and valuable metals."
+	desc = "An idol, built to the many-faced Matthios. Though none can argue his hatred of the Tyrant's Order and nobility, \
+	they certainly can't imagine what he actually looks like. \
+	This is but one of many depictions to the many-faced god, and yet it appears ready to receive tribute all the same."
 	icon_state = "evilidol"
 	icon = 'icons/roguetown/misc/structure.dmi'
+	damage_deflection = INFINITY//We don't want this smashed normally. Prevents items from doing it damage, by mistake, too.
 // What items the idol will accept
 	var/treasuretypes = list(
 		/obj/item/roguecoin,
@@ -1053,7 +1080,7 @@
 		/obj/item/candle/candlestick/gold,
 		/obj/item/kitchen/fork/silver,
 		/obj/item/kitchen/fork/gold,
-        /obj/item/kitchen/spoon/silver,
+		/obj/item/kitchen/spoon/silver,
 		/obj/item/kitchen/spoon/gold,
 		/obj/item/roguestatue,
 		/obj/item/riddleofsteel,
@@ -1076,8 +1103,20 @@
 		/obj/item/rogueweapon/sword/long/judgement, // various unique weapons around from a few roles follows. Don't lose your fancy toys....
 		/obj/item/rogueweapon/sword/long/oathkeeper,
 		/obj/item/rogueweapon/woodstaff/riddle_of_steel/magos, //bit dumb for a bandit mage to toss this toy away but whatever
-		/obj/item/rogueweapon/halberd/psyhalberd, // relic weapons but not standard Inquisition stuff
-		/obj/item/rogueweapon/greatsword/psygsword,
+		/obj/item/clothing/head/roguetown/circlet,
+		/obj/item/carvedgem,  //Some of these aren't particularly worth much, but it'd be REALLY unintuitive for "valuables" to not actually be offerings
+		/obj/item/rogueweapon/huntingknife/stoneknife/kukri,
+		/obj/item/rogueweapon/huntingknife/stoneknife/opalknife,
+		/obj/item/rogueweapon/mace/cudgel/shellrungu,
+		/obj/item/clothing/mask/rogue/facemask/carved,
+		/obj/item/clothing/neck/roguetown/carved,
+		/obj/item/kitchen/fork/carved,
+		/obj/item/kitchen/spoon/carved,
+		/obj/item/clothing/wrists/roguetown/gem,
+		/obj/item/reagent_containers/glass/bowl/carved,
+		/obj/item/reagent_containers/glass/bucket/pot/carved,
+		/obj/item/clothing/mask/rogue/facemask/carved,
+		/obj/item/cooking/platter/carved
 	)
 
 /obj/structure/fluff/statue/evil/attackby(obj/item/W, mob/user, params)
@@ -1104,7 +1143,7 @@
 					if(player.mind)
 						if(player.mind.has_antag_datum(/datum/antagonist/bandit))
 							var/datum/antagonist/bandit/bandit_players = player.mind.has_antag_datum(/datum/antagonist/bandit)
-							record_round_statistic(STATS_SHRINE_VALUE, W.get_real_price()) 
+							record_round_statistic(STATS_SHRINE_VALUE, W.get_real_price())
 							bandit_players.favor += donatedamnt
 							bandit_players.totaldonated += donatedamnt
 							to_chat(player, ("<font color='yellow'>[user.name] donates [donatedamnt] to the shrine! You now have [bandit_players.favor] favor.</font>"))
@@ -1214,9 +1253,9 @@
 	icon_state = "invertedcross"
 	divine = FALSE
 
-/obj/structure/fluff/psycross/attackby(obj/item/W, mob/user, params)
+/obj/structure/fluff/psycross/attackby(obj/item/W, mob/living/carbon/human/user, params)
 	if(user.mind)
-		if(user.mind.assigned_role == "Bishop")
+		if((user.mind.assigned_role == "Bishop") || ((user.mind.assigned_role == "Acolyte") && (user.patron.type == /datum/patron/divine/eora)))
 			if(istype(W, /obj/item/reagent_containers/food/snacks/grown/apple))
 				if(!istype(get_area(user), /area/rogue/indoors/town/church/chapel))
 					to_chat(user, span_warning("I need to do this in the chapel."))
@@ -1269,8 +1308,10 @@
 							var/bride_first_name = bride_name_parts[1]
 							thebride.real_name = "[bride_first_name] [surname]"
 							// Private notification to both
-							if(thegroom) to_chat(thegroom, span_notice("Your new shared surname is [surname]."))
-							if(thebride) to_chat(thebride, span_notice("Your new shared surname is [surname]."))
+							if(thegroom) 
+								to_chat(thegroom, span_notice("Your new shared surname is [surname]."))
+							if(thebride) 
+								to_chat(thebride, span_notice("Your new shared surname is [surname]."))
 							// Set marriedto fields
 							thegroom.marriedto = thebride.real_name
 							thebride.marriedto = thegroom.real_name
@@ -1278,8 +1319,9 @@
 							thebride.adjust_triumphs(1)
 							// After surname is set, have the priest say the wedding line
 							if(user && surname)
-								var/surname_trimmed = copytext(surname, 2) // Remove leading space if present
-								user.say("I hereby wed you [surname_trimmed]s.")
+								if(copytext(surname, 1, 2) == " ")
+									surname = copytext(surname, 2) // Remove leading space if present
+								user.say("I hereby wed you as [surname]s.")
 							priority_announce("[thegroom.real_name] has married [thebride.real_name]!", title = "Holy Union!", sound = 'sound/misc/bell.ogg')
 							qdel(A)
 							marriage = TRUE

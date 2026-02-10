@@ -143,6 +143,10 @@
 /datum/intent/rend/krieg
 	intent_intdamage_factor = 0.2
 
+/datum/intent/rend/krieg/short
+	damfactor = 1.8
+	swingdelay = 2
+
 //sword objs ฅ^•ﻌ•^ฅ
 
 /obj/item/rogueweapon/sword
@@ -320,16 +324,6 @@
 	max_blade_int = 300
 	max_integrity = 180
 
-/obj/item/rogueweapon/sword/long/undivided
-	name = "decablade"
-	desc = "A blessed longsword, held by the Holy See's templars in their stalwart defense against evil. The golden crossguard bares the winged motif of an angel, and psalms from the Pantheon's holy tome have been meticulously carved along the blade's edge. </br>'With a drop of holy Eclipsum, doth the blade rise..' </br>'..gilded, gleaming, radiant heat, warm my soul, immolate my enemies..' </br>'..and let me vanquish all those who would dare to Divide us, once more.'"
-	icon_state = "eclipsum"
-	sheathe_icon = "eclipsum"
-	max_blade_int = 300
-	max_integrity = 180
-	force = 28
-	force_wielded = 33
-
 /obj/item/rogueweapon/sword/long/undivided/getonmobprop(tag)
 	. = ..()
 	if(tag)
@@ -441,11 +435,10 @@
 	desc = "With a drop of holy Eclipsum, doth the blade rise. Gilded, gleaming, radiant heat, warm my soul, immolate my enemies."
 	icon_state = "eclipsum"
 	sheathe_icon = "eclipsum"
-	max_blade_int = 250
+	max_blade_int = 300
 	max_integrity = 180
 	force = 28
 	force_wielded = 33
-	max_integrity = 200
 
 /obj/item/rogueweapon/sword/long/holysee_lesser/getonmobprop(tag)
 	. = ..()
@@ -543,10 +536,6 @@
 				"eastabove" = 1,
 				"westabove" = 0,
 				)
-
-
-/obj/item/rogueweapon/sword/long/death
-	color = CLOTHING_BLACK
 
 /obj/item/rogueweapon/sword/long/getonmobprop(tag)
 	. = ..()
@@ -931,11 +920,12 @@
 /obj/item/rogueweapon/sword/short/falchion
 	name = "falchion"
 	desc = "A single-edged sword that is similar to a messer in appearance, its origins trace back to Otava. An implement of commoners and knights alike. It's good for cutting and thrusting."
-	force = 20
+	force = 22
 	icon_state = "falchion"
 	wdefense = 6
 	w_class = WEIGHT_CLASS_BULKY // Did not fit in a bag before path rework. Does not fit in a bag now either.
 	sheathe_icon = "falchion"
+	max_blade_int = 250
 
 /obj/item/rogueweapon/sword/short/gladius
 	name = "gladius"
@@ -974,7 +964,7 @@
 
 /obj/item/rogueweapon/sword/short/psy
 	name = "psydonic shortsword"
-	desc = "Otavan smiths worked with Grenzelhoftian artificers, and an esoteric sidearm was born: a shortsword with an unique design, dismissing a crossguard in favor of a hollow beak to hook and draw harm away from its user. Short in length, yet lethally light in weight."
+	desc = "Despite its shattered blade, this former-longsword finds new purpose and renewed lethality as something shorter and quicker and no less deadly. Like He, it perseveres, no matter what."
 	icon_state = "psyswordshort"
 	sheathe_icon = "psyswordshort"
 	force = 20
@@ -1033,14 +1023,15 @@
 	)
 
 /obj/item/rogueweapon/sword/short/messer
-	name = "messer"
+	name = "steel messer"
 	desc = "A \"Großesmesser\" of disputed Grenzel origin, meaning greatknife. It's a basic single-edge sword for civilian and military use. It excels at slicing and chopping, and it's made of steel. \
 	It can fill the exact function of a hunting sword, this one is more durable."
 	icon_state = "smesser"
-	force = 22	//Same damage as the iron messer
-	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust, /datum/intent/axe/chop, /datum/intent/sword/peel)
-	minstr = 5
-	wdefense = 4
+	force = 24	//Hunting sword + 4
+	max_blade_int = 250	//Sword + 50
+	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/rend/krieg/short, /datum/intent/axe/chop, /datum/intent/sword/peel)	//1.8x rend, similar to partizan
+	minstr = 6	// Hunting sword +2
+	wdefense = 4	//Hunting sword +2
 
 /obj/item/rogueweapon/sword/short/messer/iron
 	name = "hunting sword"
@@ -1165,8 +1156,8 @@
 	name = "stalker sabre"
 	desc = "A once elegant blade of mythril, diminishing under the suns gaze"
 	icon_state = "spidersaber"
-	force = 17
-	force_wielded = 20
+	force = 25 // same as elf sabre
+	force_wielded = 25
 	minstr = 7
 	wdefense = 9
 
@@ -1316,9 +1307,7 @@
 
 /obj/item/rogueweapon/sword/rapier/dec
 	name = "decorated rapier"
-	desc = "A fine duelist's instrument with a tapered thrusting blade. Its hilt is gilt in gold and inlaid, \
-	and its blade bears twin inscriptions on either side. One reads, \"CAST IN THE NAME OF GODS\" while the \
-	obverse reads, \"YE NOT GUILTY\"."
+	desc = "A strange, cheap ring devoid of purpose, yet carrying an uncanny sense of nostalgia of grand upsets, felled short.\n<i>'You shall know his name. You shall know his purpose. You shall die.'</i>"
 	icon_state = "decrapier"
 	sheathe_icon = "decrapier"
 	sellprice = 140
@@ -2076,15 +2065,17 @@
 	icon_state = "bs_sword"
 	minstr = 6
 	smeltresult = /obj/item/ingot/blacksteel
-	max_integrity = 200
-	sellprice = 100
+	max_integrity = 300
+	sellprice = 150
 	sheathe_icon = "sword1"
 
 /obj/item/rogueweapon/sword/decorated/blacksteel
 	name = "decorated arming sword"
 	desc = "A valuable ornate arming sword made for the purpose of ceremonial fashion. It has a fine leather grip, a carefully engraved gold-plated crossguard, and its blade is made entirely of blacksteel."
 	icon_state = "bs_swordregal"
+	max_integrity = 280
 	sellprice = 200
+
 /obj/item/rogueweapon/sword/long/shotel
 	name = "steel shotel"
 	icon_state = "shotel_steel"
@@ -2144,3 +2135,20 @@
 				return list("shrink" = 0.4,"sx" = 3,"sy" = 4,"nx" = -1,"ny" = 4,"wx" = -8,"wy" = 3,"ex" = 7,"ey" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 15,"nflip" = 8,"sflip" = 0,"wflip" = 8,"eflip" = 0)
 			if("onbelt")
 				return list("shrink" = 0.4,"sx" = -4,"sy" = -6,"nx" = 5,"ny" = -6,"wx" = 0,"wy" = -6,"ex" = -1,"ey" = -6,"nturn" = 100,"sturn" = 156,"wturn" = 90,"eturn" = 180,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
+
+
+//Elven weapons sprited and added by Jam
+/obj/item/rogueweapon/sword/short/elf
+	name = "elven shortsword"
+	desc = "This flowing sword is of classic elven design."
+	icon_state = "elfsword"
+	sellprice = 40
+	sheathe_icon = "elfsword"
+
+/obj/item/rogueweapon/sword/long/elf
+	name = "elven longsword"
+	desc = "This mighty flowing sword is of classic elven design."
+	icon = 'icons/roguetown/weapons/64.dmi'
+	icon_state = "elflongsword"
+	sellprice = 50
+	sheathe_icon = "elfsword"

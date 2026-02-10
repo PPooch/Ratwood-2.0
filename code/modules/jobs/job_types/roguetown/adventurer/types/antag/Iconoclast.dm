@@ -10,14 +10,13 @@
 	traits_applied = list(
 		TRAIT_HEAVYARMOR,// We are going to be the lord's first heavy armor unarmed class
 		TRAIT_CIVILIZEDBARBARIAN,// To be up to date with other unarmed classes.
-		TRAIT_BLACKBAGGER,
-		TRAIT_RITUALIST
+		TRAIT_RITUALIST,
 		)
 	subclass_stats = list(
 		STATKEY_STR = 3,// LETS WRASSLE
 		STATKEY_WIL = 3,// This is our Go Big stat, we want lots of stamina for miracles and WRASSLIN.
-		STATKEY_LCK = 2,//We have a total of +12 in stats.
-		STATKEY_CON = 1
+		STATKEY_LCK = 1,//We have a total of +12 in stats.
+		STATKEY_CON = 2	//-LCK +CON
 	)
 	subclass_skills = list(
 		/datum/skill/combat/maces = SKILL_LEVEL_JOURNEYMAN,
@@ -35,7 +34,6 @@
 		/datum/skill/misc/medicine = SKILL_LEVEL_JOURNEYMAN, // We can substitute for a sawbones, but aren't as good and dont have access to surgical tools
 		/datum/skill/misc/athletics = SKILL_LEVEL_MASTER, //We are the True Mathlete
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
-		/datum/skill/misc/tracking = SKILL_LEVEL_APPRENTICE,
 	)
 	cmode_music = 'sound/music/Iconoclast.ogg'
 

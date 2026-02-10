@@ -56,6 +56,13 @@
 	color = pick("#4756d8", "#759259", "#bf6f39", "#c1b144", "#b8252c")
 	..()
 
+/obj/item/clothing/head/roguetown/roguehood/reinforced
+	name = "reinforced hood"
+	armor = ARMOR_REINFORCED_HOOD
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	max_integrity = 120//+20 over base. -30 from previous value.
+	blocksound = SOFTHIT
+
 /obj/item/clothing/head/roguetown/roguehood/shalal
 	name = "keffiyeh"
 	desc = "A protective covering worn by those native to the desert."
@@ -99,6 +106,7 @@
 	icon_state = "deserthood"
 	hidesnoutADJ = FALSE
 	flags_inv = HIDEEARS|HIDEHAIR	//Does not hide face.
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	block2add = null
 
 /obj/item/clothing/neck/roguetown/roguehood/shalal/hijab/ComponentInitialize()
@@ -109,6 +117,7 @@
 	desc = "A common sight amongst those travelling the long desert routes, it offers protection from the heat and a modicum of it against the beasts that prowl its more comfortable nites."
 	max_integrity = 100
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	armor = ARMOR_SPELLSINGER //basically the same as a warscholar hood
 	item_state = "hijab"
 	icon_state = "deserthood"
@@ -119,6 +128,7 @@
 	desc = "This thick lump of burlap completely shrouds your head, protecting it from harsh weather and nosey protagonists alike."
 	color = CLOTHING_BROWN
 	body_parts_covered = HEAD|HAIR|EARS|NECK
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	item_state = "heavyhood"
 	icon_state = "heavyhood"
 	hidesnoutADJ = FALSE
@@ -127,6 +137,7 @@
 	name = "shadowed hood"
 	desc = "It sits just so, obscuring the face just enough to spoil recognition."
 	color = CLOTHING_BLACK
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 
 // Holy Hoods
 
@@ -177,6 +188,7 @@
 	sewrepair = TRUE
 	salvage_result = /obj/item/natural/cloth
 	salvage_amount = 1
+	block2add = null
 
 //............... Feldshers Hood ............... //
 /obj/item/clothing/head/roguetown/roguehood/feld
@@ -222,7 +234,17 @@
 	salvage_result = /obj/item/natural/cloth
 	salvage_amount = 1
 
-//
+/obj/item/clothing/head/roguetown/roguehood/shroudwhite
+	name = "white shroud"
+	desc = "A billowing hood, carrying the aroma of snow."
+	icon_state = "whitehood"
+	item_state = "whitehood"
+	body_parts_covered = HEAD|EARS|NOSE
+	color = null
+	salvage_result = /obj/item/natural/cloth
+	salvage_amount = 1
+
+//Psydonite hoods.
 
 /obj/item/clothing/head/roguetown/roguehood/psydon
 	name = "psydonian hood"
@@ -286,3 +308,23 @@
 	naledicolor = TRUE
 	salvage_result = /obj/item/natural/cloth
 	salvage_amount = 1
+
+/obj/item/clothing/head/roguetown/roguehood/sojourner
+	name = "sojourner's shroud"
+	desc = "A traditional garment, carried by those who survived the lonesome pilgrimage through Naledi's cursed dunes. \
+	Like a helmet, it will ward off killing blows; but unlike a helmet, it will keep the mistakes out of your incantations. </br>\
+	'..We had our tests; we had our places of sin and vice. We were to look out for brother and sister, arm-in-arm, to ensure none of us fell. \
+	And yet we all did. We all allowed that to become what is. \
+	The daemons that roam our streets, that snatch our children from our bed, that eat our wives and break our husbands. \
+	They are us, our own creations and perversions. They are humanity as humanity sees itself, made manifest through our own twisted arcyne magicks..'"
+	icon_state = "surghood"
+	item_state = "surghood"
+	color = "#a88d8d"
+	sewrepair = TRUE
+	resistance_flags = FIRE_PROOF
+	armor = ARMOR_SPELLSINGER //Higher-tier protection for pugilist-centric classes. Fits the 'glass cannon' style, and prevents instant death through a glancing headshot on the intended archetype.
+	blade_dulling = DULLING_BASHCHOP
+	body_parts_covered = HEAD|HAIR|EARS
+	max_integrity = ARMOR_INT_SIDE_STEEL //High leather-tier protection and critical resistances, steel-tier integrity. Integrity boost encourages hand-to-hand parrying. Weaker than the Psydonic Thorns.
+	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST)
+	blocksound = SOFTHIT

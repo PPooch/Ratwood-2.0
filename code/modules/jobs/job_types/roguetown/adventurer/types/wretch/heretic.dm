@@ -38,7 +38,8 @@
 	to_chat(H, span_warning("You father your unholy cause through the most time-tested of ways: hard, heavy steel in both arms and armor."))
 	H.set_blindness(0)
 	if(H.mind)
-		H.mind.current.faction += "[H.name]_faction"
+		if(H.mind.current)
+			H.mind.current.faction += "[H.name]_faction"
 		var/weapons = list("Longsword", "Mace", "Flail", "Axe", "Billhook")
 		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 		switch(weapon_choice)
@@ -84,7 +85,6 @@
 	if (istype (H.patron, /datum/patron/inhumen/zizo))
 		if(H.mind)
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/minion_order)
-			H.verbs |= /mob/living/carbon/human/proc/revelations
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/gravemark)
 			H.mind.current.faction += "[H.name]_faction"
 		ADD_TRAIT(H, TRAIT_GRAVEROBBER, TRAIT_GENERIC)
@@ -252,7 +252,8 @@
 		)
 	H.cmode_music = 'sound/music/cmode/antag/combat_cutpurse.ogg'
 	if(H.mind)
-		H.mind.current.faction += "[H.name]_faction"
+		if(H.mind.current)
+			H.mind.current.faction += "[H.name]_faction"
 		var/weapons = list("Rapier","Dagger", "Bow", "Crossbow")
 		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 		H.set_blindness(0)
@@ -281,7 +282,8 @@
 		if(H.mind)
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/minion_order)
 			H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/gravemark)
-			H.mind.current.faction += "[H.name]_faction"
+			if(H.mind.current)
+				H.mind.current.faction += "[H.name]_faction"
 		ADD_TRAIT(H, TRAIT_GRAVEROBBER, TRAIT_GENERIC)
 	H.mind?.AddSpell(new /obj/effect/proc_holder/spell/invoked/convert_heretic)
 	H.mind?.AddSpell(new /obj/effect/proc_holder/spell/invoked/wound_heal)
@@ -427,17 +429,17 @@
 	var/saved_level = CLERIC_T0
 	var/saved_max_progression = CLERIC_T1
 	var/saved_devotion_gain = CLERIC_REGEN_MINOR
-	
+
 	if(target.devotion)
 		saved_level = target.devotion.level
 		saved_devotion_gain = target.devotion.passive_devotion_gain
 		saved_max_progression = target.devotion.max_progression
-		
+
 		// Remove all granted spells
 		if(target.patron != user.patron)
 			for(var/obj/effect/proc_holder/spell/S in target.devotion.granted_spells)
 				target.mind.RemoveSpell(S)
-		
+
 		target.devotion.Destroy()
 
 	// Change patron
@@ -455,47 +457,5 @@
 	ADD_TRAIT(target, TRAIT_ZURCH, TRAIT_GENERIC)
 	to_chat(user, span_danger("You've converted [target.name] to [user.patron.name]!"))
 	to_chat(target, span_danger("You feel ancient powers lifting divine burdens from your soul..."))
-	
+
 	return TRUE
-
-/mob/living/carbon/human/proc/revelations()
-	set name = "Revelations"
-	set category = "Cleric"
-	var/obj/item/grabbing/I = get_active_held_item()
-	var/mob/living/carbon/human/H
-	var/obj/item/S = get_inactive_held_item()
-	var/found = null
-	if(!istype(I) || !ishuman(I.grabbed))
-		to_chat(src, span_warning("I don't have a victim in my hands!"))
-		return
-	H = I.grabbed
-	if(H == src)
-		to_chat(src, span_warning("I already torture myself."))
-		return
-	if (!H.restrained())
-		to_chat(src, span_warning ("My victim needs to be restrained in order to do this!"))
-		return
-	if(!istype(S, /obj/item/clothing/neck/roguetown/psicross/inhumen/aalloy))
-		to_chat(src, span_warning("I need to be holding a zcross to extract this divination!"))
-		return
-	for(var/obj/structure/fluff/psycross/zizocross/N in oview(5, src))
-		found = N
-	if(!found)
-		to_chat(src, span_warning("I need a large profane shrine structure nearby to extract this divination!"))	
-		return
-	if(!H.stat)
-		var/static/list/faith_lines = list(
-			"THE TRUTH SHALL SET YOU FREE!",
-			"WHO IS YOUR GOD!?",
-			"ARE YOU FAITHFUL!?",
-			"WHO IS YOUR SHEPHERD!?",
-		)
-		src.visible_message(span_warning("[src] shoves the decrepit zcross into [H]'s lux!"))
-		say(pick(faith_lines), spans = list("torture"))
-		H.emote("agony", forced = TRUE)
-
-		if(!(do_mob(src, H, 10 SECONDS)))
-			return
-		H.confess_sins("patron")
-		return
-	to_chat(src, span_warning("This one is not in a ready state to be questioned..."))

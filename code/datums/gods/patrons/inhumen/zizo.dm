@@ -1,8 +1,8 @@
 /datum/patron/inhumen/zizo
 	name = "Zizo"
-	domain = "Progress, Undeath, Hubris, Left Hand Magicks"
-	desc = "A once-mortal snow elf turned god. Her hubris in thinking she could harvest lux from the planet itself led to the elimination of her entire race. Her works are still used to this dae in some cases."
-	worshippers = "Necromancers, Researchers, Warlocks, and the Undead"
+	domain = "Necromancy, Progress, The Rot, Left-Handed Magicks"
+	desc = "The God-Head was the mortal snow elf Zinoviya, abandoned by Her Divine Father PSYDON. When She found out She was denied godhood, She struck PSYDON down and took it Herself, plunging the world into the Second Coming of the Rot. Burn the world to ash, and build it anew."
+	worshippers = "Necromancers, Maddened Mages, The Undead"
 	mob_traits = list(TRAIT_CABAL, TRAIT_ZIZOSIGHT)
 	miracles = list(/obj/effect/proc_holder/spell/targeted/touch/orison					= CLERIC_ORI,
 					/obj/effect/proc_holder/spell/self/zizo_snuff						= CLERIC_T0,
@@ -19,6 +19,14 @@
 		"ZIZO IS QUEEN!",
 	)
 	storyteller = /datum/storyteller/zizo
+
+/datum/patron/inhumen/zizo/post_equip(mob/living/pious)
+	. = ..()
+	if(ishuman(pious))
+		var/mob/living/carbon/human/human = pious
+		var/datum/devotion/pious_devotion = human.devotion
+		if(pious_devotion?.level >= CLERIC_T2)
+			pious.grant_language(/datum/language/undead)
 
 // When the sun is blotted out, zchurch, bad-cross, or ritual chalk
 /datum/patron/inhumen/zizo/can_pray(mob/living/follower)

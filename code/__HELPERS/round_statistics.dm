@@ -14,13 +14,14 @@
 #define STATS_ALIVE_WILDKIN "alive_wildkin"
 #define STATS_ALIVE_CONSTRUCTS "alive_constructs"
 #define STATS_ALIVE_DOLLS "alive_dolls"
-#define STATS_ALIVE_VERMINFOLK "alive_verminfolk"
+#define STATS_ALIVE_CRITTERKIN "alive_critterkin"
 #define STATS_ALIVE_DRACON "alive_dracon"
 #define STATS_ALIVE_AXIAN "alive_axian"
 #define STATS_ALIVE_TABAXI "alive_tabaxi"
 #define STATS_ALIVE_VULPS "alive_vulps"
 #define STATS_ALIVE_LUPIANS "alive_lupians"
 #define STATS_ALIVE_MOTHS "alive_moths"
+#define STATS_ALIVE_HARPIES "alive_harpies"
 
 #define STATS_VAMPIRES "vampires"
 
@@ -51,6 +52,7 @@
 #define STATS_DEADITES_ALIVE "deadites_alive"
 #define STATS_LUX_REVIVALS "lux_revivals"
 #define STATS_DODGES "dodges_made"
+#define STATS_GREED_DUSTED "consumed_by_greed"
 
 // Economic Statistics
 #define STATS_BATHMATRON_VAULT_INCOME "bath_vault_regular"
@@ -250,13 +252,14 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_ALIVE_HALFKIN = 0,
 	STATS_ALIVE_WILDKIN = 0,
 	STATS_ALIVE_CONSTRUCTS = 0,
-	STATS_ALIVE_VERMINFOLK = 0,
+	STATS_ALIVE_CRITTERKIN = 0,
 	STATS_ALIVE_DRACON = 0,
 	STATS_ALIVE_AXIAN = 0,
 	STATS_ALIVE_TABAXI = 0,
 	STATS_ALIVE_VULPS = 0,
 	STATS_ALIVE_LUPIANS = 0,
 	STATS_ALIVE_MOTHS = 0,
+	STATS_ALIVE_HARPIES = 0,
 	STATS_PEOPLE_DROWNED = 0,
 	STATS_WATER_CONSUMED  = 0,
 	STATS_LIMBS_BITTEN = 0,
@@ -327,6 +330,7 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_MAMMONS_DEPOSITED = 0,
 	STATS_MAMMONS_WITHDRAWN = 0,
 	STATS_STARTING_TREASURY = 0,
+	STATS_GREED_DUSTED = 0,
 ))
 
 GLOBAL_LIST_EMPTY(patron_follower_counts)

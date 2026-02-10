@@ -58,6 +58,8 @@
 				used = list('sound/vo/male/gen/huh (1).ogg','sound/vo/male/gen/huh (2).ogg','sound/vo/male/gen/huh (3).ogg')
 			if("hum")
 				used = list('sound/vo/male/gen/hum (1).ogg','sound/vo/male/gen/hum (2).ogg','sound/vo/male/gen/hum (3).ogg')
+			if("hmph")
+				used = list('sound/vo/male/gen/hmph (1).ogg', 'sound/vo/male/gen/hmph (2).ogg')
 			if("jump")
 				used = 'sound/vo/male/gen/jump.ogg'
 			if("laugh")
@@ -150,6 +152,8 @@
 				used = list('sound/vo/male/gen/sound_vo_male_gen_moan (1).ogg','sound/vo/male/gen/sound_vo_male_gen_moan (2).ogg','sound/vo/male/gen/sound_vo_male_gen_moan (3).ogg')
 			if("yip")
 				used = list('sound/vo/yip.ogg', 'sound/vo/yip2.ogg', 'sound/vo/yip3.ogg')
+			if("yap")
+				used = list('sound/vo/yap.ogg')
 			if("salute")
 				used = 'sound/vo/salute.ogg'
 			if("crack")

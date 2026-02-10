@@ -27,6 +27,8 @@
 	if(buckled)
 		buckled.unbuckle_mob(src,force=1)
 
+	stop_offering_item()
+
 	GLOB.mob_living_list -= src
 	for(var/s in ownedSoullinks)
 		var/datum/soullink/S = s
@@ -523,6 +525,19 @@
 		O.update_hands(src)
 		update_grab_intents()
 
+//Free resists ahead.
+//This is STUPID strong.
+//We're stuck with it for economy reasons.
+//As of now, you get a free resist if either is met:
+// - Grabbed character skill at master or higher(5).
+// - Grabbing character skill at journeymen or lower(3).
+	if(isliving(AM))
+		var/mob/living/M = AM
+		if(M.mind)
+			if(M.cmode && M.stat == CONSCIOUS && !M.restrained(ignore_grab = TRUE))
+				if(M.get_skill_level(/datum/skill/combat/wrestling) >= 5 || src.get_skill_level(/datum/skill/combat/wrestling) <= 3)
+					M.resist_grab(freeresist = TRUE) //Automatically attempt to break a passive grab if defender's combat mode is on. Anti-grabspam measure.
+
 /mob/living/proc/is_limb_covered(obj/item/bodypart/limb)
 	if(!limb)
 		return FALSE
@@ -542,8 +557,7 @@
 	if(M.buckled)
 		return //don't make them change direction or offset them if they're buckled into something.
 	if(M.dir != turn(get_dir(M,src), 180))
-		if(!((cmode || M.cmode) && M.grab_state < GRAB_AGGRESSIVE))
-			M.setDir(get_dir(M, src))
+		M.setDir(get_dir(M, src))
 	var/offset = 0
 	switch(grab_state)
 		if(GRAB_PASSIVE)
@@ -554,34 +568,19 @@
 			offset = GRAB_PIXEL_SHIFT_NECK
 		if(GRAB_KILL)
 			offset = GRAB_PIXEL_SHIFT_NECK
-	if((cmode || M.cmode) && M.grab_state < GRAB_AGGRESSIVE)
-		switch(get_dir(src, M))
-			if(NORTH)
-				set_mob_offsets("pulledby", 0, 0+offset)
-				layer = MOB_LAYER+0.05
-			if(SOUTH)
-				set_mob_offsets("pulledby", 0, 0-offset)
-				layer = MOB_LAYER-0.05
-			if(EAST)
-				set_mob_offsets("pulledby", 0+offset, 0)
-				layer = MOB_LAYER
-			if(WEST)
-				set_mob_offsets("pulledby", 0-offset, 0)
-				layer = MOB_LAYER
-	else
-		switch(get_dir(M, src))
-			if(NORTH)
-				M.set_mob_offsets("pulledby", 0, 0+offset)
-				M.layer = MOB_LAYER+0.05
-			if(SOUTH)
-				M.set_mob_offsets("pulledby", 0, 0-offset)
-				M.layer = MOB_LAYER-0.05
-			if(EAST)
-				M.set_mob_offsets("pulledby", 0+offset, 0)
-				M.layer = MOB_LAYER
-			if(WEST)
-				M.set_mob_offsets("pulledby", 0-offset, 0)
-				M.layer = MOB_LAYER
+	switch(get_dir(M, src))
+		if(NORTH)
+			M.set_mob_offsets("pulledby", 0, 0+offset)
+			M.layer = MOB_LAYER+0.05
+		if(SOUTH)
+			M.set_mob_offsets("pulledby", 0, 0-offset)
+			M.layer = MOB_LAYER-0.05
+		if(EAST)
+			M.set_mob_offsets("pulledby", 0+offset, 0)
+			M.layer = MOB_LAYER
+		if(WEST)
+			M.set_mob_offsets("pulledby", 0-offset, 0)
+			M.layer = MOB_LAYER
 
 /mob/living/proc/reset_pull_offsets(mob/living/M, override)
 	if(!override && M.buckled)
@@ -643,8 +642,6 @@
 				var/obj/item/grabbing/I = get_inactive_held_item()
 				if(I.grabbed == pulling)
 					dropItemToGround(I, silent = FALSE)
-	reset_offsets("pulledby")
-	reset_pull_offsets(src)
 
 	. = ..()
 
@@ -885,7 +882,7 @@
 /mob/living/proc/revive(full_heal = FALSE, admin_revive = FALSE)
 	SEND_SIGNAL(src, COMSIG_LIVING_REVIVE, full_heal, admin_revive)
 	if(full_heal)
-		fully_heal(admin_revive = admin_revive)
+		fully_heal(admin_revive = admin_revive, break_restraints = admin_revive)
 	if(stat == DEAD && (admin_revive || can_be_revived())) //in some cases you can't revive (e.g. no brain)
 		GLOB.dead_mob_list -= src  //If any more forms of revival are added, better to use a proc to do this - easier to search
 		GLOB.alive_mob_list += src
@@ -904,8 +901,7 @@
 		if(mind)
 			if(admin_revive)
 				mind.remove_antag_datum(/datum/antagonist/zombie)
-			for(var/S in mind.spell_list)
-				var/obj/effect/proc_holder/spell/spell = S
+			for(var/obj/effect/proc_holder/spell/spell as anything in mind.spell_list)
 				spell.updateButtonIcon()
 		qdel(GetComponent(/datum/component/rot))
 
@@ -922,15 +918,12 @@
 
 /mob/living/Crossed(atom/movable/AM)
 	. = ..()
-	for(var/i in get_equipped_items())
+	for(var/i as anything in get_equipped_items())
 		var/obj/item/item = i
 		SEND_SIGNAL(item, COMSIG_ITEM_WEARERCROSSED, AM, src)
 
-
-
-//proc used to completely heal a mob.
-//admin_revive = TRUE is used in other procs, for example mob/living/carbon/fully_heal()
-/mob/living/proc/fully_heal(admin_revive = FALSE)
+/// proc used to completely heal a mob. admin_revive = TRUE is used in other procs, for example mob/living/carbon/fully_heal()
+/mob/living/proc/fully_heal(admin_revive = FALSE, break_restraints = FALSE)
 	restore_blood()
 	setToxLoss(0, 0) //zero as second argument not automatically call updatehealth().
 	setOxyLoss(0, 0)
@@ -1224,6 +1217,7 @@
 		client.chargedprog = 0
 		client.tcompare = null //so we don't shoot the attack off
 		client.mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'
+		STOP_PROCESSING(SSmousecharge, client)
 	if(used_intent)
 		used_intent.on_mouse_up()
 	if(mmb_intent)
@@ -1243,6 +1237,8 @@
 	var/wrestling_diff = 0
 	var/resist_chance = 55
 	var/mob/living/L = pulledby
+	if(!L)
+		return TRUE
 	var/combat_modifier = 1
 	var/agg_grab = FALSE
 
@@ -1305,10 +1301,6 @@
 			if(!gcord)
 				gcord = L.get_inactive_held_item()
 			to_chat(pulledby, span_warning("[src] struggles against the [gcord]!"))
-			if(!src.mind) // NPCs do less damage to the garrote
-				gcord.take_damage(10)
-			else
-				gcord.take_damage(25)
 		if(!HAS_TRAIT(src, TRAIT_GARROTED))
 			visible_message(span_warning("[src] struggles to break free from [L]'s grip!"), \
 						span_warning("I struggle against [L]'s grip![rchance]"), null, null, L)
@@ -1337,7 +1329,7 @@
 		var/obj/item/inqarticles/garrote/gcord = L.get_active_held_item()
 		if(!gcord)
 			gcord = L.get_inactive_held_item()
-		gcord.take_damage(gcord.max_integrity)
+		gcord.take_damage(100)//Two escapes to snap it.
 		gcord.wipeslate(src)
 	log_combat(L, src, "broke grab")
 	L.changeNext_move(agg_grab ? CLICK_CD_GRABBING : CLICK_CD_GRABBING + 1 SECONDS)
@@ -1847,7 +1839,7 @@
 			fall(!canstand_involuntary)
 		layer = LYING_MOB_LAYER //so mob lying always appear behind standing mobs
 		if (is_shifted)
-			layer = 3.99 + pixelshift_layer //So mobs can pixelshift layers while lying down
+			layer = LYING_MOB_LAYER + pixelshift_layer //So mobs can pixelshift layers while lying down
 	else
 		if(layer == LYING_MOB_LAYER)
 			layer = initial(layer)
@@ -2280,7 +2272,8 @@
 		if(ttime < 0)
 			ttime = 0
 
-	visible_message(span_info("[src] looks down through [T]."))
+	if(m_intent != MOVE_INTENT_SNEAK)
+		visible_message(span_info("[src] looks down through [T]."))
 
 	if(!do_after(src, ttime, target = src))
 		return
@@ -2324,3 +2317,78 @@
 /mob/living/proc/get_fire_overlay(stacks, on_fire)
 	RETURN_TYPE(/mutable_appearance)
 	return null
+
+/mob/living/proc/offer_item(mob/living/offered_to, obj/offered_item)
+	if(isnull(offered_to) || isnull(offered_item))
+		stack_trace("no offered_to or offered_item in offer_item()")
+		return
+
+	var/time_left = COOLDOWN_TIMELEFT(src, offer_cooldown)
+
+	if(time_left)
+		to_chat(src, span_danger("I must wait [time_left / 10] seconds before offering again."))
+		return FALSE
+
+	offered_item_ref = WEAKREF(offered_item)
+
+	var/stealthy = (m_intent == MOVE_INTENT_SNEAK)
+
+	if(stealthy)
+		to_chat(src, span_notice("I secretly offer [offered_item] to [offered_to]."))
+		to_chat(offered_to, span_notice("[offered_to] secretly offers [offered_item] to me..."))
+	else
+		visible_message(
+			span_notice("[src] offers [offered_item] to [offered_to] with an outstretched hand."), \
+			span_notice("I offer [offered_item] to [offered_to] with an outstretched hand."), \
+			vision_distance = COMBAT_MESSAGE_RANGE, \
+			ignored_mobs = list(offered_to)
+		)
+		to_chat(offered_to, span_notice("[src] offers [offered_item] to me..."))
+
+	new /obj/effect/temp_visual/offered_item_effect(get_turf(src), offered_item, src, offered_to, stealthy)
+
+/mob/living/proc/cancel_offering_item(stealthy)
+	var/obj/offered_item = offered_item_ref?.resolve()
+	if(isnull(offered_item))
+		stop_offering_item()
+		return
+	if(stealthy)
+		to_chat(src, "I stop offering [offered_item ? offered_item : "the item"].")
+	else
+		visible_message(
+			span_notice("[src] puts their hand back down."), \
+			span_notice("I stop offering [offered_item ? offered_item : "the item"]."), \
+			vision_distance = COMBAT_MESSAGE_RANGE, \
+		)
+	stop_offering_item()
+
+/mob/living/proc/stop_offering_item()
+	COOLDOWN_START(src, offer_cooldown, 1 SECONDS)
+	SEND_SIGNAL(src, COMSIG_LIVING_STOPPED_OFFERING_ITEM)
+	offered_item_ref = null
+	update_a_intents()
+
+/mob/living/proc/try_accept_offered_item(mob/living/offerer, obj/offered_item, stealthy)
+	if(get_active_held_item())
+		to_chat(src, span_warning("I need a free hand to take it!"))
+		return FALSE
+
+	accept_offered_item(offerer, offered_item, stealthy)
+	return TRUE
+
+/mob/living/proc/accept_offered_item(mob/living/offerer, obj/offered_item, stealthy)
+	transferItemToLoc(offered_item, src)
+	put_in_active_hand(offered_item)
+	if(stealthy)
+		to_chat(offerer, span_notice("[src] takes the secretly offered [offered_item]."))
+		to_chat(src, span_notice("I take the secretly offered [offered_item] from [offerer]."))
+	else
+		to_chat(offerer, span_notice("[src] takes [offered_item] from my outstretched hand."))
+		visible_message(
+			span_warning("[src] takes [offered_item] from [offerer]'s outstretched hand!"), \
+			span_notice("I take [offered_item] from [offerer]'s outstretched hand."), \
+			vision_distance = COMBAT_MESSAGE_RANGE, \
+			ignored_mobs = list(offerer)
+		)
+	SEND_SIGNAL(offered_item, COMSIG_OBJ_HANDED_OVER, src, offerer)
+	offerer.stop_offering_item()

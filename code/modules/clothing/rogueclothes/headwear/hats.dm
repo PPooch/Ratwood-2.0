@@ -139,6 +139,8 @@
 	desc = "A noble's chaperon made for the local Marshal. \"How terribly unfortunate you are!\""
 	color = "#641E16"
 	detail_color = "#b68e37ff"
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	armor = ARMOR_SPELLSINGER // spellsinger hat stats. Drip or drown.
 
 /obj/item/clothing/head/roguetown/chaperon/noble/guildmaster
 	name = "Guildmaster's chapereon"
@@ -228,22 +230,6 @@
 		REMOVE_TRAIT(user, TRAIT_SILVER_BLESSED, TRAIT_GENERIC)
 		REMOVE_TRAIT(user, TRAIT_ZOMBIE_IMMUNE, TRAIT_GENERIC)
 
-/obj/item/clothing/head/roguetown/headband/naledi
-	name = "sojourner's headband"
-	desc = "A traditional garment, carried by those who survived the lonesome pilgrimage through Naledi's cursed dunes. Like a helmet, it will ward off killing blows; but unlike a helmet, it will keep the sweat out of your eyes and the mistakes out of your incantations. </br>'..We had our tests; we had our places of sin and vice. We were to look out for brother and sister, arm-in-arm, to ensure none of us fell. And yet we all did. We all allowed that to become what is. The daemons that roam our streets, that snatch our children from our bed, that eat our wives and break our husbands. They are us, our own creations and perversions. They are humanity as humanity sees itself, made manifest through our own twisted arcyne magicks..'"
-	icon_state = "headband"
-	color = "#48443b"
-	sewrepair = TRUE
-	resistance_flags = FIRE_PROOF
-	armor = ARMOR_SPELLSINGER //Higher-tier protection for pugilist-centric classes. Fits the 'glass cannon' style, and prevents instant death through a glancing headshot on the intended archetype.
-	blade_dulling = DULLING_BASHCHOP
-	body_parts_covered = HEAD|HAIR|EARS
-	max_integrity = ARMOR_INT_SIDE_STEEL //High leather-tier protection and critical resistances, steel-tier integrity. Integrity boost encourages hand-to-hand parrying. Weaker than the Psydonic Thorns.
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_BLUNT, BCLASS_TWIST)
-	blocksound = SOFTHIT
-	//dropshrink = 0.75
-	dynamic_hair_suffix = null
-
 /obj/item/clothing/head/roguetown/headband/monk
 	name = "monk's headband"
 	desc = "A winding length of cloth, meticulously lined with heavy leather strips. Errant impacts are thwarted, yet not a degree of vision is impaired; valuable traits, for the Monk who must enlighten their villains with a white-knuckled sermon. </br>'..I kick ass for the Lord!'"
@@ -277,6 +263,17 @@
 
 /obj/item/clothing/head/roguetown/headband/red
 	color = CLOTHING_RED
+
+/obj/item/clothing/head/roguetown/maidband
+	name = "maid headband"
+	desc = "A pleated cloth headband. It has gained widespread popularity from nobles travelling with their servants."
+	icon = 'icons/roguetown/clothing/head.dmi'
+	icon_state = "maidband"
+	item_state = "maidband"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head.dmi'
+	slot_flags = ITEM_SLOT_HEAD
+	body_parts_covered = NONE
+	sewrepair = TRUE
 
 /obj/item/clothing/head/roguetown/priesthat
 	name = "priest's hat"
@@ -336,6 +333,14 @@
 	icon_state = "duelhat"
 	sewrepair = TRUE
 	color = COLOR_ALMOST_BLACK
+	detail_tag = "_detail"
+	detail_color = COLOR_SILVER
+
+/obj/item/clothing/head/roguetown/duelisthat
+	name = "duelist's hat"
+	desc = "A feathered leather hat, to show them all your superiority."
+	icon_state = "duelisthat"
+	sewrepair = TRUE
 	detail_tag = "_detail"
 	detail_color = COLOR_SILVER
 
@@ -504,3 +509,36 @@
 	icon_state = "loudmouth"
 	item_state = "loudmouth"
 	color = CLOTHING_RED
+
+/obj/item/clothing/head/roguetown/scarf
+	name = "scarf"
+	desc = "A simple scarf, designed to be worn upon the shoulders."
+	item_state = "hijab_t"
+	icon_state = "deserthood_t"
+	color = "#b8252c"
+	hidesnoutADJ = FALSE
+	flags_inv = null
+	sleevetype = null
+	sleeved = null
+	icon = 'icons/roguetown/clothing/head.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/head.dmi' //Overrides slot icon behavior
+	alternate_worn_layer  = 8.9 //On top of helmet
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_MOUTH|ITEM_SLOT_NECK
+	armor = list("blunt" = 0, "slash" = 0, "stab" = 0, "piercing" = 0, "fire" = 0, "acid" = 0)
+	dynamic_hair_suffix = ""
+	edelay_type = 1
+	blocksound = SOFTHIT
+	max_integrity = 100
+	sewrepair = TRUE
+	muteinmouth = FALSE
+	spitoutmouth = FALSE
+
+/obj/item/clothing/head/roguetown/scarf/MiddleClick(mob/user)
+	overarmor = !overarmor
+	to_chat(user, span_info("I [overarmor ? "wear \the [src] under my hair" : "wear \the [src] over my hair"]."))
+	if(overarmor)
+		alternate_worn_layer = HOOD_LAYER //Below Hair Layer
+	else
+		alternate_worn_layer = BACK_LAYER //Above Hair Layer
+	user.update_inv_wear_mask()
+	user.update_inv_head()

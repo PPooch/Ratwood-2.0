@@ -113,6 +113,7 @@
 	. = ..()
 	if(.)
 		if(!was_destroyed && obj_destroyed)
+			SEND_SIGNAL(user, COMSIG_MOB_FELL_TREE)
 			record_featured_stat(FEATURED_STATS_TREE_FELLERS, user)
 			record_round_statistic(STATS_TREES_CUT)
 
@@ -269,6 +270,7 @@
 	icon_state = "center-leaf1"
 	density = FALSE
 	max_integrity = 10
+	plane = FLOOR_PLANE
 
 /obj/structure/flora/newleaf/Initialize()
 	. = ..()

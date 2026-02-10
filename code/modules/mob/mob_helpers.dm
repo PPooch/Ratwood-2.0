@@ -481,6 +481,7 @@
 		hud_used.action_intent.switch_intent(r_index,l_index,oactive)
 
 /mob/proc/update_a_intents()
+	stop_attack()
 	QDEL_LIST(possible_a_intents)
 	QDEL_LIST(possible_offhand_intents)
 	var/list/intents = list()
@@ -609,7 +610,6 @@
 	if(hud_used)
 		hud_used.quad_intents?.switch_intent(input)
 		hud_used.give_intent?.switch_intent(input)
-	givingto = null
 
 /mob/verb/def_intent_change(input as num)
 	set name = "def-change"
@@ -1017,7 +1017,7 @@
 	if(mind)
 		. += mind.assigned_role
 		. += mind.special_role //In case there's something special leftover, try to avoid
-		for(var/datum/antagonist/A in mind.antag_datums)
+		for(var/datum/antagonist/A as anything in mind.antag_datums)
 			. += "[A.type]"
 
 ///Can the mob see reagents inside of containers?
@@ -1030,7 +1030,11 @@
 		var/datum/migrant_role/migrant = MIGRANT_ROLE(migrant_type)
 		used_title = migrant.name
 		if(migrant.advjob_examine && advjob)
-			used_title = advjob
+			var/datum/advclass/AC = SSrole_class_handler.get_advclass_by_name(advjob)
+			if(AC?.examine_name)
+				used_title = AC.examine_name
+			else
+				used_title = advjob
 	else if(job)
 		var/datum/job/J = SSjob.GetJob(job)
 		if(!J)
@@ -1038,8 +1042,12 @@
 		used_title =  J.display_title || J.title
 		if(J.f_title && (pronouns == SHE_HER || pronouns == THEY_THEM_F))
 			used_title = J.f_title
-		if(J.advjob_examine)
-			used_title = advjob
+		if(J.advjob_examine && advjob)
+			var/datum/advclass/AC = SSrole_class_handler.get_advclass_by_name(advjob)
+			if(AC?.examine_name)
+				used_title = AC.examine_name
+			else
+				used_title = advjob
 	return used_title
 
 ///Is the passed in mob a ghost with admin powers, doesn't check for AI interact like isAdminGhost() used to

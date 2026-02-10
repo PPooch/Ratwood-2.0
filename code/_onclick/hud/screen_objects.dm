@@ -85,18 +85,26 @@
 		to_chat(L, "*----*")
 		if(ishuman(usr))
 			var/mob/living/carbon/human/M = usr
-			if(M.charflaw)
+			if(length(M.vices))
+				for(var/datum/charflaw/vice in M.vices)
+					to_chat(M, "<span class='info'><small>[vice.desc]</small></span>")
+				to_chat(M, "*----*")
+			else if(M.charflaw)
 				to_chat(M, "<span class='info'>[M.charflaw.desc]</span>")
 				to_chat(M, "*----*")
 			if(M.mind)
 				if(M.mind.language_holder)
 					var/finn
 					for(var/X in M.mind.language_holder.languages)
+						if(!X || !ispath(X, /datum/language))
+							continue
 						var/datum/language/LA = new X()
 						finn = TRUE
 						to_chat(M, "<span class='info'>[LA.name] - ,[LA.key]</span>")
 					if(!finn)
 						to_chat(M, "<span class='warning'>I don't know any languages.</span>")
+					else // open_language_menu
+						to_chat(M, "<a href='?src=[REF(M)];task=open_language_menu;'>Language Menu</a>")
 					to_chat(M, "*----*")
 		for(var/X in GLOB.roguetraits)
 			if(HAS_TRAIT(L, X))
@@ -909,7 +917,7 @@
 			var/obj/item/flipper = usr.get_active_held_item()
 			if(!flipper)
 				return
-			if((!usr.Adjacent(flipper) && !usr.DirectAccess(flipper)) || !isliving(usr) || usr.incapacitated())
+			if((!usr.Adjacent(flipper) && !usr.IsDirectlyAccessible(flipper)) || !isliving(usr) || usr.incapacitated())
 				return
 			var/old_width = flipper.grid_width
 			var/old_height = flipper.grid_height
@@ -1295,25 +1303,48 @@
 	if(hud.mymob.stat != DEAD && ishuman(hud.mymob))
 		var/mob/living/carbon/human/H = hud.mymob
 		var/list/missing_bodyparts_zones = H.get_missing_limbs()
+		// if we have a taur bodypart, treat it as covering both legs
+		if(H.get_bodypart(BODY_ZONE_TAUR))
+			missing_bodyparts_zones -= BODY_ZONE_L_LEG
+			missing_bodyparts_zones -= BODY_ZONE_R_LEG
 		for(var/X in H.bodyparts)
 			var/obj/item/bodypart/BP = X
 			if(BP.body_zone in missing_bodyparts_zones)
 				continue
 			if(HAS_TRAIT(H, TRAIT_NOPAIN))
-				var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]")
-				limby.color = "#78a8ba"
-				. += limby
+				// for taur, show the nopain overlay over both legs as well
+				if(BP.body_zone == BODY_ZONE_TAUR)
+					var/list/_legs = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)
+					for(var/_z in _legs)
+						var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[_z]")
+						limby.color = "#78a8ba"
+						. += limby
+				else
+					var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]")
+					limby.color = "#78a8ba"
+					. += limby
 				continue
 			var/damage = BP.burn_dam + BP.brute_dam
 			if(damage > BP.max_damage)
 				damage = BP.max_damage
 			var/comparison = (damage/BP.max_damage)
-			. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]") //apply healthy limb
-			var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]w-[BP.body_zone]") //apply wounded overlay
-			limby.alpha = (comparison*255)*2
-			. += limby
-			if(BP.get_bleed_rate())
-				. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]-bleed") //apply healthy limb
+			// if taur bodypart, render the healthy/wounded/bleed overlays for both legs
+			if(BP.body_zone == BODY_ZONE_TAUR)
+				var/list/_legs = list(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)
+				for(var/_z in _legs)
+					. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[_z]") //healthy limb
+					var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]w-[_z]") //wounded overlay
+					limby.alpha = (comparison*255)*2
+					. += limby
+					if(BP.get_bleed_rate())
+						. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[_z]-bleed") //bleed overlay
+			else
+				. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]") //apply healthy limb
+				var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]w-[BP.body_zone]") //apply wounded overlay
+				limby.alpha = (comparison*255)*2
+				. += limby
+				if(BP.get_bleed_rate())
+					. += mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[BP.body_zone]-bleed") //apply bleed overlay
 		for(var/X in missing_bodyparts_zones)
 			var/mutable_appearance/limby = mutable_appearance('icons/mob/roguehud64.dmi', "[H.gender == "male" ? "m" : "f"]-[X]") //missing limb
 			limby.color = "#2f002f"
@@ -1607,7 +1638,11 @@
 	if(ishuman(usr))
 		var/mob/living/carbon/human/M = usr
 		if(modifiers["left"])
-			if(M.charflaw)
+			if(length(M.vices))
+				to_chat(M, "*----*")
+				for(var/datum/charflaw/vice in M.vices)
+					to_chat(M, span_info("<small>[vice.desc]</small>"))
+			else if(M.charflaw)
 				to_chat(M, "*----*")
 				to_chat(M, span_info("[M.charflaw.desc]"))
 			to_chat(M, "*--------*")
@@ -1655,10 +1690,12 @@
 				to_chat(M, span_warning("I haven't TRIUMPHED."))
 				return
 			if(alert("Do you want to remember a TRIUMPH?", "", "Yes", "No") == "Yes")
-				if(!M.has_stress_event(/datum/stressevent/triumph))
-					M.add_stress(/datum/stressevent/triumph)
-					M.adjust_triumphs(-1)
-					M.playsound_local(M, 'sound/misc/notice (2).ogg', 100, FALSE)
+				M.add_stress(/datum/stressevent/triumph)
+				M.adjust_triumphs(-1)
+				M.playsound_local(M, 'sound/misc/notice (2).ogg', 100, FALSE)
+				if(M.sexcon)
+					var/datum/sex_controller/sexo = M.sexcon
+					sexo.adjust_charge(SEX_MAX_CHARGE)
 
 
 /atom/movable/screen/rmbintent
@@ -2015,6 +2052,27 @@
 
 	animate(fill, time = duration)
 
+/atom/movable/screen/bloodpool/Click(location,control,params)
+	var/list/modifiers = params2list(params)
+	if(modifiers["left"] && modifiers["shift"])
+		examine_ui(usr)
+		return FALSE
+	if(!modifiers["left"])
+		return
+	if(usr.next_click > world.time)
+		return
+	usr.next_click = world.time + 1
+	if(!ismob(usr))
+		return
+	// If the fill color is the devotion-blue, trigger the cleric prayer verb.
+	var/col = fill.color
+	if(col == "#3C41A4" || col == "#3c41a4")
+		if(istype(usr, /mob/living/carbon/human))
+			var/mob/living/carbon/human/H = usr
+			H.clericpray()
+		return TRUE
+	return
+
 /atom/movable/screen/bloodpool_maskpart
 	layer = FLOAT_LAYER
 	plane = FLOAT_PLANE
@@ -2025,6 +2083,11 @@
 	. = ..()
 	src.icon = icon
 	src.parent_screen = parent_screen
+
+/atom/movable/screen/bloodpool_maskpart/Click(location, control, params)
+	if(parent_screen)
+		return parent_screen.Click(location, control, params)
+	return FALSE
 
 /atom/movable/screen/bloodpool_maskpart/examine_ui(mob/user)
 	return parent_screen?.examine_ui(user)

@@ -176,17 +176,8 @@
 		if(M.doing)
 			M.doing = FALSE
 		if(!supress_message)
-			M.visible_message("<span class='warning'>[src] [M.cmode ? "<b>clings</b> onto" : "grabs"] [M].</span>", \
-				"<span class='danger'>[src] grabs onto you.</span>")
-		if(isliving(src))
-			var/mob/living/L = src
-			if(M.cmode || L.cmode)	//We're in combat, so we apply clickcds
-				var/clickcd = CLICK_CD_TRACKING
-				var/spdbonus = (10 - L.get_stat(STATKEY_SPD)) * 2
-				clickcd -= spdbonus
-				if(M.mind)	//No clickcd if we're grabbing a mindless mob, just frag the stupid AI
-					L.changeNext_move(clickcd)
-				M.changeNext_move(CLICK_CD_HEAVY)
+			M.visible_message("<span class='warning'>[src] grabs [M].</span>", \
+				"<span class='danger'>[src] grabs you.</span>")
 	if(istype(AM, /mob/living/simple_animal))
 		var/mob/living/simple_animal/simple_animal = AM
 		simple_animal.toggle_ai(AI_ON)
@@ -313,14 +304,11 @@
 
 /atom/movable/Move(atom/newloc, direct, glide_size_override = 0)
 	var/atom/movable/pullee = pulling
-	var/mob/living/pulled
 	var/turf/T = loc
 	if(!moving_from_pull)
 		check_pulling()
 	if(!loc || !newloc)
 		return FALSE
-	if(istype(pulledby, /mob/living))
-		pulled = pulledby
 	var/atom/oldloc = loc
 	var/direction_to_move = direct
 
@@ -399,16 +387,6 @@
 
 	if(.)
 		Moved(oldloc, direct)
-	if(. && pulled && pulledby == pulled && pulled.cmode && pulled.grab_state < GRAB_AGGRESSIVE) //NICHE case of being in a first tier grab state.
-		if(pulledby.anchored)
-			pulledby.stop_pulling()
-		else
-			var/pull_dir = get_dir(src, pulledby)
-			//puller and pullee more than one tile away or in diagonal position
-			if(get_dist(src, pulledby) > 1 || (moving_diagonally != SECOND_DIAG_STEP && ((pull_dir - 1) & pull_dir)))
-				pulledby.moving_from_pull = src
-				pulledby.Move(T, get_dir(pulledby, T), glide_size) //the pullee tries to reach our previous position
-				pulledby.moving_from_pull = null
 	if(. && pulling && pulling == pullee && pulling != moving_from_pull) //we were pulling a thing and didn't lose it during our move.
 		if(pulling.anchored)
 			stop_pulling()
@@ -513,10 +491,13 @@
 	A.Bumped(src)
 
 /atom/movable/proc/forceMove(atom/destination)
+	if(!destination || QDELETED(src))
+		CRASH("[src] No valid destination passed into forceMove")
+
 	var/mob/living/carbon/human/H = null
 	if(ishuman(src.loc))
 		H = src.loc
-	
+
 	. = FALSE
 	if(destination)
 		. = doMove(destination)
@@ -781,23 +762,27 @@ GLOBAL_VAR_INIT(pixel_diff_time, 1)
 	animate(src, pixel_x = pixel_x + pixel_x_diff, pixel_y = pixel_y + pixel_y_diff, transform=rotated_transform, time = GLOB.pixel_diff_time, easing=LINEAR_EASING, flags = ANIMATION_PARALLEL)
 	animate(pixel_x = pixel_x - pixel_x_diff, pixel_y = pixel_y - pixel_y_diff, transform=initial_transform, time = GLOB.pixel_diff_time * 2, easing=SINE_EASING, flags = ANIMATION_PARALLEL)
 
-/atom/movable/proc/do_attack_animation(atom/A, visual_effect_icon, obj/item/used_item, no_effect, item_animation_override = null, datum/intent/used_intent, simplified = FALSE)
+/atom/movable/proc/do_attack_animation(atom/A, visual_effect_icon, obj/item/used_item, no_effect, item_animation_override = null, datum/intent/used_intent = null, simplified = FALSE)
 	if(used_item || !simplified)
 		var/animation_type = item_animation_override || used_intent?.get_attack_animation_type()
-		do_item_attack_animation(A, visual_effect_icon, used_item, animation_type = animation_type)
-		return
+		if(used_intent?.swingdelay)
+			if(isliving(src))
+				var/mob/living/L = src
+				if(L.mind)
+					draw_swingdelay(A, used_intent.custom_swingdelay, used_intent.swingdelay)
+					addtimer(CALLBACK(src, PROC_REF(do_item_attack_animation), A, visual_effect_icon, used_item, animation_type), used_intent.swingdelay)
+		else
+			do_item_attack_animation(A, visual_effect_icon, used_item, animation_type = animation_type)
+			return
 	wiggle(A)
 
 
 /atom/movable/proc/do_item_attack_animation(atom/A, visual_effect_icon, obj/item/used_item, animation_type = ATTACK_ANIMATION_SWIPE)
-	if(used_item)
-		if(used_item.no_effect)
-			return
+	if(QDELETED(src) || QDELETED(A) || QDELETED(used_item))
+		return
 	if(!visual_effect_icon)
 		return
 	if(A == src)
-		return
-	if (isnull(used_item))
 		return
 	var/dist = get_dist(src, A)
 	if(dist <= 1)
@@ -942,18 +927,47 @@ GLOBAL_VAR_INIT(pixel_diff_time, 1)
 				animate(attack, pixel_y = 3 * y_sign * angle_mult, time = 0.2 SECONDS, easing = CIRCULAR_EASING | EASE_IN, flags = ANIMATION_PARALLEL)
 				animate(pixel_y = y_return, time = 0.2 SECONDS, easing = CIRCULAR_EASING | EASE_OUT)
 	else
-		//Oldschool indicators.
-		var/turf/first_step = get_step(src, get_dir(src, A))
-		var/obj/effect/temp_visual/dir_setting/attack_effect/firstatk = new(first_step, get_dir(src, A))
+		do_attack_animation_simple(A, visual_effect_icon)
+
+	///Oldschool indicators. Used by non-weapon intents or simple mobs.
+/atom/movable/proc/do_attack_animation_simple(atom/A, visual_effect_icon, wiggle = TRUE)
+	var/newdir = get_dir(src, A)
+	var/turf/first_step = get_step(src, newdir)
+	var/obj/effect/temp_visual/dir_setting/attack_effect/firstatk = new(first_step, newdir)
+	firstatk.icon_state = visual_effect_icon
+	firstatk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	var/dist = get_dist(src, A)
+	if(dist > 1)	//2+ tiles, we trace a path to the target.
+		for(var/i = 1, i<dist, i++)
+			newdir = get_dir(first_step, A)
+			var/turf/next_step = get_step(first_step, newdir)
+			var/obj/effect/temp_visual/dir_setting/attack_effect/atk = new(next_step, newdir)
+			atk.icon_state = visual_effect_icon
+			atk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+			first_step = next_step
+	if(wiggle)
+		wiggle(A)
+
+///Bit of a shoddy copy paste specifically for more static swingdelays
+/atom/movable/proc/draw_swingdelay(atom/A, visual_effect_icon, delay)
+	var/newdir = get_dir(src, A)
+	var/turf/first_step = get_step(src, newdir)
+	var/obj/effect/temp_visual/swingdelay/firstatk = new(first_step, delay)
+	firstatk.duration = delay
+	if(visual_effect_icon)
 		firstatk.icon_state = visual_effect_icon
-		firstatk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-		if(dist > 1)	//2+ tiles, we trace a path to the target.
-			for(var/i = 1, i<dist, i++)
-				var/turf/next_step = get_step(first_step, get_dir(first_step, A))
-				var/obj/effect/temp_visual/dir_setting/attack_effect/atk = new(next_step, get_dir(first_step, A))
+	firstatk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	var/dist = get_dist(src, A)
+	if(dist > 1)	//2+ tiles, we trace a path to the target.
+		for(var/i = 1, i<dist, i++)
+			newdir = get_dir(first_step, A)
+			var/turf/next_step = get_step(first_step, newdir)
+			var/obj/effect/temp_visual/swingdelay/atk = new(next_step, delay)
+			atk.duration = delay
+			if(visual_effect_icon)
 				atk.icon_state = visual_effect_icon
-				atk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-				first_step = next_step
+			atk.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+			first_step = next_step
 
 /obj/effect/temp_visual/dir_setting/attack_effect
 	icon = 'icons/effects/effects.dmi'
@@ -1058,14 +1072,13 @@ GLOBAL_VAR_INIT(pixel_diff_time, 1)
 	var/datum/language/chosen_langtype
 	var/highest_priority
 
-	for(var/lt in H.languages)
-		var/datum/language/langtype = lt
-		if(!can_speak_in_language(langtype))
+	for(var/datum/language/langtype as anything in H.languages)
+		if(!can_speak_in_language(langtype.type))
 			continue
 
 		var/pri = initial(langtype.default_priority)
 		if(!highest_priority || (pri > highest_priority))
-			chosen_langtype = langtype
+			chosen_langtype = langtype.type
 			highest_priority = pri
 
 	H.selected_default_language = .

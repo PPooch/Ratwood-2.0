@@ -128,6 +128,7 @@
 	body += "<a href='?priv_msg=[M.ckey]'>PM</a> - "
 	body += "<a href='?_src_=holder;[HrefToken()];subtlemessage=[REF(M)]'>SM</a> - "
 	body += "<a href='?_src_=holder;[HrefToken()];adminplayerobservefollow=[REF(M)]'>FLW</a> - "
+	body += "<a href='?_src_=holder;[HrefToken()];cursemenu=[M.ckey]'>CRS</a> - "
 	//Default to client logs if available
 	var/source = LOGSRC_MOB
 	if(M.client)
@@ -251,7 +252,7 @@
 	if(!check_rights())
 		return
 
-	M.fully_heal(admin_revive = TRUE)
+	M.fully_heal(admin_revive = TRUE, break_restraints = TRUE)
 	message_admins(span_danger("Admin [key_name_admin(usr)] healed [key_name_admin(M)]!"))
 	log_admin("[key_name(usr)] healed [key_name(M)].")
 
@@ -342,7 +343,7 @@
 
 	if(!check_rights())
 		return
-	
+
 	if(!M.ckey)
 		to_chat(src, span_warning("There is no ckey attached to this mob."))
 		return
@@ -857,7 +858,10 @@
 	else
 		alert(usr, "Target has no mind!") // Optional Error check that may or may not be neccessary
 	GLOB.chosen_names -= H.real_name
-	LAZYREMOVE(GLOB.actors_list, H.mobid)
+	if(!mob_job)
+		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(WANDERERS, FALSE)], H.mobid)
+	else
+		LAZYREMOVE(GLOB.actors_list[SSjob.bitflag_to_department(mob_job.department_flag, mob_job.obsfuscated_job)], H.mobid)
 	LAZYREMOVE(GLOB.roleplay_ads, H.mobid)
 	H.returntolobby()
 

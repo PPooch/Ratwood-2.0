@@ -80,7 +80,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 /obj/effect/landmark/start/adventurerlate
 	name = "Adventurerlate"
 	icon_state = "arrow"
-	jobspawn_override = list("Skeleton", "Pilgrim", "Adventurer", "Migrant","Trader")
+	jobspawn_override = list("Skeleton", "Pilgrim", "Adventurer", "Migrant", "Refugee")
 	delete_after_roundstart = FALSE
 
 /obj/effect/landmark/start/banditlate
@@ -260,7 +260,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/nightman
-	name = "Nightmaster"
+	name = "Bathmaster"
 	icon_state = "arrow"
 
 /obj/effect/landmark/start/nightmaiden
@@ -392,9 +392,11 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	name = "Adventurer"
 	icon_state = "arrow"
 
+//Remove this at some point. Vestigial.
 /obj/effect/landmark/start/trader
-	name = "Trader"
+	name = "Refugee"
 	icon_state = "arrow"
+//End of remove.
 
 /obj/effect/landmark/start/courtagent
 	name = "Court Agent"
@@ -677,6 +679,33 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/start/new_player)
 
 /obj/effect/landmark/underworldsafe
 	name = "safe zone"
+
+//Deathsdoor landmark
+/obj/effect/landmark/deaths_door/entry/Initialize(mapload)
+	. = ..()
+	var/turf/T = get_turf(src)
+	if(T)
+		GLOB.deaths_door_entries += T
+	qdel(src)
+
+/obj/effect/landmark/deaths_door/entry/tl
+	name = "deaths door entry point"
+/obj/effect/landmark/deaths_door/entry/tr
+	name = "deaths door entry point"
+/obj/effect/landmark/deaths_door/entry/bl
+	name = "deaths door entry point"
+/obj/effect/landmark/deaths_door/entry/br
+	name = "deaths door entry point"
+
+/obj/effect/landmark/deaths_door/exit/Initialize(mapload)
+	. = ..()
+	var/turf/T = get_turf(src)
+	if(T)
+		GLOB.deaths_door_exit = T
+	qdel(src)
+
+/obj/effect/landmark/deaths_door/exit
+	name = "deaths door exit point"
 
 GLOBAL_LIST_EMPTY(travel_tile_locations)
 

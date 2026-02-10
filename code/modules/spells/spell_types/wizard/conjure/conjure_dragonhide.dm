@@ -49,7 +49,7 @@
 	sleeved = null
 	boobed = FALSE
 	flags_inv = null
-	armor_class = ARMOR_CLASS_LIGHT
+	armor_class = ARMOR_CLASS_NONE
 	blade_dulling = DULLING_BASHCHOP
 	blocksound = PLATEHIT
 	armor = ARMOR_DRAGONHIDE
@@ -75,7 +75,7 @@
 	. = ..()
 	if(!QDELETED(src))
 		dispel()
-	
+
 /obj/item/clothing/suit/roguetown/dragonhide/dropped(mob/living/user)
 	. = ..()
 	user.remove_status_effect(/datum/status_effect/buff/dragonhide)
@@ -90,7 +90,7 @@
 	id = "dragonscaled"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/dragonhide
 	duration = -1
-	examine_text = "<font color='red'>SUBJECTPRONOUN is covered in ashy scales!"
+	examine_text = "<font color='red'>SUBJECTPRONOUN is covered in ashy scales!</font>"
 	var/outline_colour = "#c23d09"
 
 /atom/movable/screen/alert/status_effect/buff/dragonhide

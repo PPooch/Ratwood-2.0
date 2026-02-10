@@ -131,7 +131,7 @@
 	craftdiff = 1
 
 /datum/crafting_recipe/roguetown/survival/bag
-	name = "bag"
+	name = "sack"
 	result = /obj/item/storage/roguebag/crafted
 	reqs = list(
 		/obj/item/natural/fibers = 1,
@@ -469,5 +469,28 @@
 		/obj/item/reagent_containers/lux_impure = 1,
 		/obj/item/heart_blood_vial/filled = 3,
 		)
+	skillcraft = /datum/skill/misc/medicine
+	craftdiff = 2
+
+/datum/crafting_recipe/roguetown/survival/purify_lux_compress
+	name = "purifiy lux (compression)"
+	result = list(
+		/obj/item/reagent_containers/lux,
+		)
+	reqs = list(
+		/obj/item/reagent_containers/lux_impure = 2,
+		)
+	skillcraft = /datum/skill/misc/medicine
+	craftdiff = 4
+
+/datum/crafting_recipe/roguetown/survival/bandage
+	name = "bandages (medicine)"
+	result = list(
+		/obj/item/natural/cloth/bandage
+	)
+	reqs = list(
+		/obj/item/natural/cloth = 1,
+		/obj/item/natural/silk = 1,
+		/obj/item/ash = 1)
 	skillcraft = /datum/skill/misc/medicine
 	craftdiff = 2

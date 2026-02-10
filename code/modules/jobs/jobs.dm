@@ -69,20 +69,25 @@ GLOBAL_LIST_INIT(noble_positions, list(
 	"Marshal",
 	"Councillor",
 	"Steward",
+	"Clerk",
 	"Knight",
 ))
 
 GLOBAL_LIST_INIT(courtier_positions, list(
 	"Court Magician",
+	"Magicians Associate",
 	"Head Physician",
+	"Apothecary",
 	"Jester",
 	"Seneschal",
+	"Servant",
 ))
 
 GLOBAL_LIST_INIT(garrison_positions, list(
 	"Watchman",
 	"Warden",
 	"Sergeant",
+	"Veteran",
 	"Man at Arms",
 	"Squire",
 	"Dungeoneer",
@@ -132,7 +137,7 @@ GLOBAL_LIST_INIT(peasant_positions, list(
 	"Bathhouse Attendant",
 	"Prisoner",
 	"Beggar",
-	"Trader",
+	"Refugee",
 	"Pilgrim",
 ))
 
@@ -142,22 +147,16 @@ GLOBAL_LIST_INIT(mercenary_positions, list(
 ))
 
 GLOBAL_LIST_INIT(youngfolk_positions, list(
-	"Clerk",
-	"Apothecary",
-	"Smithy Apprentice",
-	"Magicians Associate",
 	"Churchling",
-	"Servant",
 	"Shophand",
 	"Vagabond",
 ))
 
 GLOBAL_LIST_INIT(wanderer_positions, list(
-	"Veteran",
-	"Adventurer",
 	"Mercenary",
-	"Bandit",
+	"Adventurer",
 	"Court Agent",
+	"Bandit",
 	"Wretch",
 ))
 
@@ -178,9 +177,9 @@ GLOBAL_LIST_INIT(roguefight_positions, list(
 
 //This list is used to prevent the duke from stripping nobility from certain jobs that aren't intrinsically a part of the town.
 GLOBAL_LIST_INIT(foreign_positions, list(
-	"Adventurer", 
-	"Mercenary", 
-	"Bandit", 
+	"Adventurer",
+	"Mercenary",
+	"Bandit",
 	"Wretch",
 	"Inquisitor",
 	"Suitor",

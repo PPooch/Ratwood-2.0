@@ -1,8 +1,8 @@
 /datum/patron/divine/dendor
 	name = "Dendor"
-	domain = "God of the Earth and Nature"
-	desc = "The God of Wilds, born from Abyssor's feverish dreams. Spilt forth life from the oceans to land in a wild craze. The Father of Ground-Lyfe. Treefather."
-	worshippers = "Druids, Beasts, Madmen"
+	domain = "Plants, Animals, Nature, Agriculture"
+	desc = "The Treefather was the First Druid, driven mad by the abuse of His realm. Even still, He stands vigil over the woods and the plains, blessing our harvests and our livelihoods. His beasts show us no quarter, but we can learn to avoid their jaws."
+	worshippers = "Druids, Beasts, Madmen, Farmers, Elves, Wildkin"
 	mob_traits = list(TRAIT_KNEESTINGER_IMMUNITY, TRAIT_LEECHIMMUNE)
 	miracles = list(/obj/effect/proc_holder/spell/targeted/touch/orison			= CLERIC_ORI,
 					/obj/effect/proc_holder/spell/invoked/spiderspeak 			= CLERIC_T0,
@@ -10,7 +10,9 @@
 					/obj/effect/proc_holder/spell/invoked/lesser_heal 			= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/blood_heal			= CLERIC_T1,
 					/obj/effect/proc_holder/spell/targeted/wildshape			= CLERIC_T2,
+					/obj/effect/proc_holder/spell/targeted/beasttame			= CLERIC_T2,
 					/obj/effect/proc_holder/spell/targeted/conjure_glowshroom	= CLERIC_T3,
+					/obj/effect/proc_holder/spell/targeted/conjure_vines 		= CLERIC_T3,
 					/obj/effect/proc_holder/spell/self/howl/call_of_the_moon	= CLERIC_T4,
 					/obj/effect/proc_holder/spell/invoked/resurrect/dendor		= CLERIC_T4,
 	)
@@ -21,7 +23,7 @@
 	)
 	storyteller = /datum/storyteller/dendor
 
-// In grove, bog, cross, or ritual chalk 
+// In grove, bog, cross, or ritual chalk
 // Yes, he is NOT calling the master cus he's unique. Whole bog is his prayer zone. Druids exist for a reason instead of in the church.
 /datum/patron/divine/dendor/can_pray(mob/living/follower)
 	. = ..()
@@ -52,7 +54,7 @@
 )
 	*message_out = span_info("A rush of primal energy spirals about [target]!")
 	*message_self = span_notice("I'm infused with primal energies!")
-				
+
 	var/list/natural_stuff = list(/obj/structure/flora/roguegrass, /obj/structure/flora/roguetree, /obj/structure/flora/rogueshroom, /obj/structure/soil, /obj/structure/flora/newtree, /obj/structure/flora/tree, /obj/structure/glowshroom)
 	var/bonus = 0
 

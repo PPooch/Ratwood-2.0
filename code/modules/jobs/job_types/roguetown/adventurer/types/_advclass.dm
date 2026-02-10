@@ -1,5 +1,6 @@
 /datum/advclass
 	var/name
+	var/examine_name			// Optional. Different name shown when examining (defaults to name if not set)
 	var/list/classes
 	var/outfit
 	var/tutorial = "Choose me!"
@@ -79,6 +80,8 @@
 			new horse(TU)
 
 	for(var/trait in traits_applied)
+		if(trait in H.dna.species.banned_traits)
+			continue
 		ADD_TRAIT(H, trait, ADVENTURER_TRAIT)
 
 	if(noble_income)

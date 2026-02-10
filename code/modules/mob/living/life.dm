@@ -29,56 +29,50 @@
 		log_game("Z-TRACKING: [src] of type [src.type] has a Z-registration despite not having a client.")
 		update_z(null)
 
-	if (notransform)
+	if(notransform)
 		return
-	if(!loc)
+	if(isnull(loc))
 		return
 
-	if(HAS_TRAIT(src, TRAIT_SIMPLE_WOUNDS))
-		handle_wounds()
-		handle_embedded_objects()
-		handle_blood()
-		//passively heal even wounds with no passive healing
-	var/list/wounds = get_wounds()
-	if (islist(wounds))
-		for (var/entry in wounds)
-			// get_wounds() нередко возвращает вложенные списки (по конечностям и т.п.)
-			if (islist(entry))
-				for (var/sub in entry)
-					var/datum/wound/W = sub
-					W?.heal_wound(1)
-			else
-				var/datum/wound/W = entry
-				W?.heal_wound(1)
-
-	/// ENDVRE AS HE DOES.
-	if(!stat && HAS_TRAIT(src, TRAIT_PSYDONITE) && !HAS_TRAIT(src, TRAIT_PARALYSIS))
-		handle_wounds()
-		//passively heal wounds, but not if you're skullcracked OR DEAD.
-	if (blood_volume > BLOOD_VOLUME_SURVIVE)
-		var/list/wounds2 = get_wounds()
-		if (islist(wounds2))
-			for (var/entry in wounds2)
-				if (islist(entry))
-					for (var/sub in entry)
-						var/datum/wound/W2 = sub
-						W2?.heal_wound(0.6)
-				else
-					var/datum/wound/W2 = entry
-					W2?.heal_wound(0.6)	
+	if(times_fired % 3 == 0) // Every third tick, handle simple wounds
+		if(HAS_TRAIT(src, TRAIT_SIMPLE_WOUNDS))
+			handle_wounds()
+			handle_embedded_objects()
+			handle_blood()
+			//passively heal even wounds with no passive healing
+			heal_wounds(3) // Check how many ticks we've passed then heal them based on the amount passed. (1 tick = 1, 2 ticks = 2, etc)
 
 	if(QDELETED(src)) // diseases can qdel the mob via transformations
 		return
 
-	handle_environment()
-	
-	//Random events (vomiting etc)
-	handle_random_events()
+	/** Why fire every X ticks instead of every tick?
+	 * This only touches CLIENTLESS mobs. Keep in mind we're iterating over 1k+ mobs, every time the mobs subsystem fires.
+	 * Does this mean that random events, traits, and pain stuns will happen less frequently? Yes.
+	 * Most of these handle procs have an additional argument. So, what number do you add?
+	 * Handle_Traits() uses multiplier, starts off at 1.
+	 * 
+	 * Depending on the proc...
+	 * 	Chance based?
+	 * 	- Generally you'll want to add 5 for each tick you're passing. Default: 5 per tick passed
+	 * 	Guaranteed? / Status effects?
+	 * 	- One per tick passed. Default: ticks skipped
+	 * 	- For ones that are decrementing... same concept. Default: ticks skipped
+	 *  - Handle_traits() is a special case, it's a multiplier. Default: 1
+	 */
+	if(!client)
+		if(times_fired % 3 == 0)
+			handle_status_effects(3) //all special effects, stun, knockdown, jitteryness, hallucination, sleeping, etc
+			handle_environment()
+			handle_random_events(15) // pain stun, vomitting, etc
+			update_sneak_invis()
+			handle_traits(3) // eye, ear, brain damages
+	else
+		handle_status_effects() //all special effects, stun, knockdown, jitteryness, hallucination, sleeping, etc
+		handle_environment()
+		handle_random_events()  // pain stun, vomitting, etc
+		update_sneak_invis()
+		handle_traits() // eye, ear, brain damages
 
-	handle_traits() // eye, ear, brain damages
-	handle_status_effects() //all special effects, stun, knockdown, jitteryness, hallucination, sleeping, etc
-
-	update_sneak_invis()
 
 	if(machine)
 		machine.check_eye(src)
@@ -102,7 +96,7 @@
 				return
 			if(istype(drownrelay.loc, /turf/open/water))
 				handle_inwater(drownrelay.loc, extinguish = FALSE, force_drown = TRUE)
-			if(istype(loc, /turf/open/water)) // Extinguish ourselves if our body is in water.	
+			if(istype(loc, /turf/open/water)) // Extinguish ourselves if our body is in water.
 				extinguish_mob()
 			return
 	. =..()
@@ -121,12 +115,12 @@
 	if(istype(loc, /turf/open/water))
 		handle_inwater(loc)
 
-/mob/living/proc/handle_random_events()
+/mob/living/proc/handle_random_events(additional = 0)
 	//random painstun
 	if(!stat && !HAS_TRAIT(src, TRAIT_NOPAINSTUN))
 		if(world.time > mob_timers["painstun"] + 600)
 			if(getBruteLoss() + getFireLoss() >= (STAWIL * 10))
-				var/probby = 53 - (STAWIL * 2)
+				var/probby = 53 - (STAWIL * 2) + additional
 				if(!(mobility_flags & MOBILITY_STAND))
 					probby = probby - 20
 				if(prob(probby))
@@ -143,20 +137,20 @@
 	return
 
 /mob/living/proc/handle_wounds()
-	if(stat >= DEAD)
-		for(var/datum/wound/wound in get_wounds())
+	for(var/datum/wound/wound as anything in get_wounds())
+		if(!wound)
+			continue
+
+		if(stat != DEAD)
+			wound.on_life()
+		else
 			wound.on_death()
-
-		return
-
-	for(var/datum/wound/wound in get_wounds())
-		wound.on_life()
 
 /obj/item/proc/on_embed_life(mob/living/user, obj/item/bodypart/bodypart)
 	return
 
 /mob/living/proc/handle_embedded_objects()
-	for(var/obj/item/embedded in simple_embedded_objects)
+	for(var/obj/item/embedded as anything in simple_embedded_objects)
 		if(embedded.on_embed_life(src))
 			continue
 
@@ -171,23 +165,24 @@
 			to_chat(src,span_danger("[embedded] falls out of me!"))
 
 //this updates all special effects: knockdown, druggy, stuttering, etc..
-/mob/living/proc/handle_status_effects()
+/mob/living/proc/handle_status_effects(additional)
+	var/amt_to_remove = 1 + additional
 	if(confused)
-		confused = max(confused - 1, 0)
+		confused = max(confused - amt_to_remove, 0)
 	if(slowdown)
-		slowdown = max(slowdown - 1, 0)
+		slowdown = max(slowdown - amt_to_remove, 0)
 	if(slowdown <= 0)
 		remove_movespeed_modifier(MOVESPEED_ID_LIVING_SLOWDOWN_STATUS)
 
-/mob/living/proc/handle_traits()
+/mob/living/proc/handle_traits(multiplier = 1)
 	//Eyes
 	if(eye_blind)	//blindness, heals slowly over time
 		if(HAS_TRAIT_FROM(src, TRAIT_BLIND, EYES_COVERED)) //covering your eyes heals blurry eyes faster
-			adjust_blindness(-3)
+			adjust_blindness(-3 * multiplier)
 		else if(!stat && !(HAS_TRAIT(src, TRAIT_BLIND)))
-			adjust_blindness(-1)
+			adjust_blindness(-1 * multiplier)
 	else if(eye_blurry)			//blurry eyes heal slowly
-		adjust_blurriness(-1)
+		adjust_blurriness(-1 * multiplier)
 
 /mob/living/proc/update_damage_hud()
 	return

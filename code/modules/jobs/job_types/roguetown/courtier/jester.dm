@@ -1,7 +1,7 @@
 /datum/job/roguetown/jester
 	title = "Jester"
 	flag = JESTER
-	department_flag = PEASANTS
+	department_flag = COURTIERS
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
@@ -20,18 +20,21 @@
 	min_pq = -4 //silly jesters are funny so low PQ requirement
 	max_pq = null
 	round_contrib_points = 2
-	social_rank = SOCIAL_RANK_NOBLE
+	social_rank = SOCIAL_RANK_MINOR_NOBLE
 
 /datum/outfit/job/roguetown/jester/pre_equip(mob/living/carbon/human/H)
 	..()
 	shoes = /obj/item/clothing/shoes/roguetown/jester
 	pants = /obj/item/clothing/under/roguetown/tights
 	armor = /obj/item/clothing/suit/roguetown/shirt/jester
-	belt = /obj/item/storage/belt/rogue/leather
-	beltr = /obj/item/storage/keyring/servant
-	beltl = /obj/item/storage/belt/rogue/pouch
+	backl = /obj/item/storage/backpack/rogue/satchel
+	backr = /obj/item/rogue/instrument/trumpet
+	belt = /obj/item/storage/belt/rogue/leather/black
+	beltr = /obj/item/storage/belt/rogue/pouch
+	beltl = /obj/item/rogue/instrument/drum
 	head = /obj/item/clothing/head/roguetown/jester
 	neck = /obj/item/clothing/neck/roguetown/coif
+	backpack_contents = list(/obj/item/storage/keyring/servant)
 	H.adjust_skillrank(/datum/skill/combat/knives, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/reading, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/sneaking, 4, TRUE)
@@ -64,6 +67,7 @@
 	if(!istype(H.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/wild_tongue))
 		H.internal_organs_slot[ORGAN_SLOT_TONGUE] = new /obj/item/organ/tongue/wild_tongue
 	ADD_TRAIT(H, TRAIT_ZJUMP, TRAIT_GENERIC)
+	ADD_TRAIT(H, TRAIT_NOFALLDAMAGE1, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_LEAPER, TRAIT_GENERIC)
 	ADD_TRAIT(H, TRAIT_NUTCRACKER, TRAIT_GENERIC)
 	if(prob(50))

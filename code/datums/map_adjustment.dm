@@ -12,7 +12,7 @@
 	/// key of map_adjustment. It is used to check if '/datum/map_config/var/map_file' is matched
 	var/map_file_name
 	/// Name of the realm/location for announcements (e.g., "Azure Peak", "Azure Bleak", etc.)
-	var/realm_name = "Azure Peak"
+	var/realm_name = "Rotwood Vale"
 	/// Jobs that this map won't use
 	var/list/blacklist
 	/// Jobs that have slots changed /datum/job = num
@@ -27,6 +27,8 @@
 	var/list/sexes_adjust
 	/// Jobs that have age adjustments /datum/job = list(AGE_CHILD, AGE_ADULT, AGE_MIDDLEAGED, AGE_OLD, AGE_IMMORTAL)
 	var/list/ages_adjust
+
+	var/list/threat_regions
 
 /// called on map config is loaded.
 /// You need to change things manually here.

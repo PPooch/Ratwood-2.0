@@ -9,7 +9,6 @@
 	sleeved = 'icons/roguetown/clothing/onmob/helpers/sleeves_armor.dmi'
 	boobed = TRUE
 	flags_inv = HIDEBOOB|HIDECROTCH
-	color = "#7c6d5c"
 	r_sleeve_status = SLEEVE_NORMAL
 	l_sleeve_status = SLEEVE_NORMAL
 	experimental_inhand = FALSE
@@ -101,9 +100,6 @@
 
 /obj/item/clothing/suit/roguetown/shirt/robe/black
 	color = CLOTHING_BLACK
-
-/obj/item/clothing/suit/roguetown/shirt/robe/white
-	color = CLOTHING_WHITE
 
 /obj/item/clothing/suit/roguetown/shirt/robe/priest
 	name = "solar vestments"
@@ -325,6 +321,7 @@
 	color = null
 	icon_state = "feldrobe"
 	item_state = "feldrobe"
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
 
 /obj/item/clothing/suit/roguetown/shirt/robe/tabardblack
 	name = "black tabard"
@@ -332,3 +329,12 @@
 	color = null
 	icon_state = "surgrobe"
 	item_state = "surgrobe"
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK
+
+/obj/item/clothing/suit/roguetown/shirt/robe/tabardwhite
+	name = "white tabard"
+	desc = "Sleeveless robes, white like bone."
+	color = null
+	icon_state = "whiterobe"
+	item_state = "whiterobe"
+	slot_flags = ITEM_SLOT_ARMOR|ITEM_SLOT_CLOAK

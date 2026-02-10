@@ -142,7 +142,11 @@
 /mob/living/carbon/proc/find_used_grab_limb(mob/living/user) //for finding the exact limb or inhand to grab
 	var/used_limb = BODY_ZONE_CHEST
 	var/missing_nose = HAS_TRAIT(src, TRAIT_MISSING_NOSE)
+	var/original_zone = user.zone_selected
 	var/obj/item/bodypart/affecting
+	if(src.get_bodypart(BODY_ZONE_TAUR)) // respect taur bodies
+		if(user.zone_selected == BODY_ZONE_L_LEG || user.zone_selected == BODY_ZONE_R_LEG || user.zone_selected == BODY_ZONE_PRECISE_L_FOOT || user.zone_selected == BODY_ZONE_PRECISE_R_FOOT)
+			user.zone_selected = BODY_ZONE_TAUR
 	affecting = get_bodypart(check_zone(user.zone_selected))
 	if(user.zone_selected && affecting)
 		if(user.zone_selected in affecting.grabtargets)
@@ -152,6 +156,7 @@
 				used_limb = user.zone_selected
 		else
 			used_limb = affecting.body_zone
+	user.zone_selected = original_zone
 	return used_limb
 
 /mob/proc/check_arm_grabbed(index)
@@ -224,6 +229,7 @@
 				user.update_inv_hands()
 				var/turf/location = get_turf(src)
 				add_splatter_floor(location)
+				add_splatter_wall(location, force = statforce)
 				if(get_dist(user, src) <= 1)	//people with TK won't get smeared with blood
 					user.add_mob_blood(src)
 				var/splatter_dir = get_dir(user, src)
@@ -325,8 +331,7 @@
 	. = ..()
 	if(. & EMP_PROTECT_CONTENTS)
 		return
-	for(var/X in internal_organs)
-		var/obj/item/organ/O = X
+	for(var/obj/item/organ/O as anything in internal_organs)
 		O.emp_act(severity)
 
 ///Adds to the parent by also adding functionality to propagate shocks through pulling and doing some fluff effects.

@@ -64,6 +64,7 @@
 	sellprice = 30
 	sewrepair = FALSE
 	anvilrepair = /datum/skill/craft/armorsmithing
+	is_silver = TRUE
 
 /obj/item/storage/belt/rogue/leather/battleskirt
 	name = "cloth military skirt"
@@ -132,6 +133,15 @@
 	desc = "A pliable sash made of wool meant to wrap tightly around the waist, especially popular with travellers who wear loose shirts."
 	icon_state = "clothsash"
 	item_state = "clothsash"
+
+/obj/item/storage/belt/rogue/leather/suspenders/butler
+	name = "suspenders"
+	desc = "A pair of suspenders which go over the shoulders. Used for keeping one's pants in place in an admittably fashionable style."
+	icon = 'icons/roguetown/clothing/belts.dmi'
+	icon_state = "butlersuspenders"
+	item_state = "butlersuspenders"
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/belts.dmi'
+	slot_flags = ITEM_SLOT_BELT
 
 /obj/item/storage/belt/rogue/pouch
 	name = "pouch"
@@ -272,6 +282,7 @@
 	icon_state = "satchelshort"
 	item_state = "satchelshort"
 	slot_flags = ITEM_SLOT_BACK|ITEM_SLOT_HIP //Implement a check in the future that prevents more than one being worn at once.
+	component_type = /datum/component/storage/concrete/roguetown/satchelshort
 
 /obj/item/storage/backpack/rogue/satchel/beltpack
 	name = "beltpack" //Satchel that fits on the cloak or belt slot. Should be exceptionally rare for on-spawn loadouts, unless a flag's added to make it incompatable with regular satchels.
@@ -529,29 +540,6 @@
 /obj/item/clothing/climbing_gear/equipped(mob/living/carbon/human/user, slot)
 	. = ..()
 	playsound(loc, 'sound/items/garrotegrab.ogg', 100, TRUE)
-
-/obj/item/clothing/wall_grab
-	name = "wall"
-	item_state = "grabbing"
-	icon_state = "grabbing"
-	icon = 'icons/mob/roguehudgrabs.dmi'
-	max_integrity = 10
-	w_class = WEIGHT_CLASS_HUGE
-	item_flags = ABSTRACT
-	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
-	no_effect = TRUE
-
-/obj/item/clothing/wall_grab/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-	var/turf/openspace = user.loc
-	openspace.zFall(user) // slop?
-
-/obj/item/clothing/wall_grab/intercept_zImpact(atom/movable/AM, levels = 1) // with this shit it doesn't generate "X falls through open space". thank u guppyluxx
-    . = ..()
-    . |= FALL_NO_MESSAGE
 
 /obj/item/storage/hip/orestore/bronze
 	name = "mechanized ore bag"

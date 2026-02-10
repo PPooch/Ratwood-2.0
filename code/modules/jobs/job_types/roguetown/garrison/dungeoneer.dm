@@ -23,7 +23,7 @@
 	min_pq = 0
 	max_pq = null
 	round_contrib_points = 2
-	social_rank = SOCIAL_RANK_PEASANT
+	social_rank = SOCIAL_RANK_YEOMAN
 	cmode_music = 'sound/music/combat_dungeoneer.ogg'
 	job_subclasses = list(
 		/datum/advclass/dungeoneer
@@ -74,7 +74,6 @@
 		/datum/skill/misc/reading = SKILL_LEVEL_NOVICE,
 		/datum/skill/misc/athletics = SKILL_LEVEL_JOURNEYMAN,
 	)
-	adv_stat_ceiling = list(STAT_STRENGTH = 16, STAT_CONSTITUTION = 16, STAT_WILLPOWER = 16)
 
 /datum/outfit/job/roguetown/dungeoneer/base/pre_equip(mob/living/carbon/human/H)
 	..()

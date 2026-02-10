@@ -30,6 +30,8 @@
 	var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
 	if(!penis)
 		return FALSE
+	if(H.sexcon && H.sexcon.bottom_exposed == TRUE)
+		return TRUE
 	if(H.underwear)
 		return FALSE
 	if(!get_location_accessible(H, BODY_ZONE_PRECISE_GROIN))
@@ -48,15 +50,18 @@
 			adjective = "an average"
 		if(3)
 			adjective = "a large"
-	switch(H.sexcon.arousal)
-		if(80 to INFINITY)
-			arousal_modifier = ", throbbing violently"
-		if(50 to 80)
-			arousal_modifier = ", turgid and leaky"
-		if(20 to 50)
-			arousal_modifier = ", stiffened and twitching"
-		else
-			arousal_modifier = ", soft and flaccid"
+	if(H.sexcon)
+		switch(H.sexcon.arousal)
+			if(80 to INFINITY)
+				arousal_modifier = ", throbbing violently"
+			if(50 to 80)
+				arousal_modifier = ", turgid and leaky"
+			if(20 to 50)
+				arousal_modifier = ", stiffened and twitching"
+			else
+				arousal_modifier = ", soft and flaccid"
+	else
+		arousal_modifier = ", soft and flaccid"
 	var/used_name
 	if(penis.erect_state != ERECT_STATE_HARD && penis.sheath_type != SHEATH_TYPE_NONE)
 		switch(penis.sheath_type)
@@ -82,14 +87,16 @@
 		return FALSE
 	var/mob/living/carbon/human/H = described
 	var/obj/item/organ/testicles/testes = H.getorganslot(ORGAN_SLOT_TESTICLES)
+	var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
+	if(penis && penis.sheath_type == SHEATH_TYPE_SLIT) //If our penis hides in a slit, dont describe testicles
+		return FALSE
 	if(!testes)
 		return FALSE
+	if(H.sexcon && H.sexcon.bottom_exposed == TRUE)
+		return TRUE
 	if(H.underwear)
 		return FALSE
 	if(!get_location_accessible(H, BODY_ZONE_PRECISE_GROIN))
-		return FALSE
-	var/obj/item/organ/penis/penis = H.getorganslot(ORGAN_SLOT_PENIS)
-	if(penis && penis.sheath_type == SHEATH_TYPE_SLIT) //If our penis hides in a slit, dont describe testicles
 		return FALSE
 	return TRUE
 
@@ -177,7 +184,7 @@
 	var/adjective
 	switch(breasts.breast_size)
 		if(0)
-			adjective = "a flat"
+			adjective = "a flat chest"
 		if(1)
 			adjective = "a slight"
 		if(2)
@@ -202,4 +209,6 @@
 			adjective = "a stomach-hiding"
 		if(12)
 			adjective = "a torso-sized"
+	if(breasts.breast_size == 0)
+		return "[adjective]" 
 	return "[adjective] pair of breasts"

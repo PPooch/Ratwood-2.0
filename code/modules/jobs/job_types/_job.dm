@@ -231,7 +231,7 @@
 	// Ready up bonus
 	if(!H.islatejoin)
 		H.adjust_triumphs(1)
-		H.apply_status_effect(/datum/status_effect/buff/foodbuff)
+		H.apply_status_effect(/datum/status_effect/buff/mealbuff)
 		H.hydration = 1000 // Set higher hydration
 
 		if(H.mind)
@@ -243,7 +243,7 @@
 		var/used_title = display_title || title
 		if((H.pronouns == SHE_HER || H.pronouns == THEY_THEM_F) && f_title)
 			used_title = f_title
-		scom_announce("[H.real_name] the [used_title] arrives to Rotwood Vale.")
+		scom_announce("[H.real_name] the [used_title] arrives from Kingsfield.")
 
 	if(give_bank_account)
 		if(give_bank_account > 1)
@@ -262,24 +262,30 @@
 
 	if(social_rank)
 		H.social_rank = social_rank
+	if(istype(H, /mob/living/carbon/human))
+		var/mob/living/carbon/human/Hu = H
+		if(Hu.familytree_pref != FAMILY_NONE && !Hu.family_datum)
+			var/timer = rand(60, 180)
+			addtimer(CALLBACK(SSfamilytree, TYPE_PROC_REF(/datum/controller/subsystem/familytree, AddLocal), H, Hu.familytree_pref), timer SECONDS)
 
+	var/department = SSjob.bitflag_to_department(department_flag, obsfuscated_job)
 	if (!hidden_job)
 		var/mob/living/carbon/human/Hu = H
 		if (istype(H, /mob/living/carbon/human))
-			if (obsfuscated_job)
-				GLOB.actors_list[H.mobid] = "[H.real_name] as the [Hu.dna.species.name] Adventurer<BR>"
+			if (obsfuscated_job) // WANDERER
+				GLOB.actors_list["Wanderers"] += list("[H.mobid]" = "[H.real_name] as the [Hu.dna.species.name] Adventurer<BR>")
 			else
-				GLOB.actors_list[H.mobid] = "[H.real_name] as the [Hu.dna.species.name] [H.mind.assigned_role]<BR>"
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as the [Hu.dna.species.name] [H.mind.assigned_role]<BR>")
 		else
 			if (obsfuscated_job)
-				GLOB.actors_list[H.mobid] = "[H.real_name] as Adventurer<BR>"
+				GLOB.actors_list["Wanderers"] += list("[H.mobid]" = "[H.real_name] as Adventurer<BR>")
 			else
-				GLOB.actors_list[H.mobid] = "[H.real_name] as [H.mind.assigned_role]<BR>"
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as [H.mind.assigned_role]<BR>")
 
 	if(islist(advclass_cat_rolls))
 		hugboxify_for_class_selection(H)
 
-	log_admin("[H.key]/([H.real_name]) has joined as [H.mind.assigned_role].")
+	log_admin("[department] >> [H.key]/([H.real_name]) has joined as [H.mind.assigned_role].")
 
 /client/verb/set_mugshot()
 	set category = "OOC"
@@ -351,6 +357,7 @@
 
 	//Equip the rest of the gear
 	H.dna.species.before_equip_job(src, H, visualsOnly)
+	H.apply_organ_stuff() // apply super special sauce organ stuff when we spawn in, and therefore have MIND
 	if(!outfit_override && visualsOnly && visuals_only_outfit)
 		outfit_override = visuals_only_outfit
 	if(should_wear_femme_clothes(H))

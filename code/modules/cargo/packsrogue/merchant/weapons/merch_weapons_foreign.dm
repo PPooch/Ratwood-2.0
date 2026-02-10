@@ -88,3 +88,27 @@
 	name = "Grenzelhoftian Blacksteel Staff"
 	cost = 100
 	contains = list(/obj/item/rogueweapon/woodstaff/emerald/blacksteelstaff)
+
+//// Elven Weapons
+/datum/supply_pack/rogue/merc_weapons/elfsword
+	name = "Elven Shortsword"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/sword/short/elf)
+
+	
+/datum/supply_pack/rogue/merc_weapons/elflongsword
+	name = "Elven Longsword"
+	cost = 80
+	contains = list(/obj/item/rogueweapon/sword/long/elf)
+
+	
+/datum/supply_pack/rogue/merc_weapons/elfswordspear
+	name = "Elven Swordspear"
+	cost = 100
+	contains = list(/obj/item/rogueweapon/spear/naginata/elf)
+
+	
+/datum/supply_pack/rogue/merc_weapons/elfcurveblade
+	name = "Elven Curveblade"
+	cost = 120
+	contains = list(/obj/item/rogueweapon/greatsword/elf)

@@ -3,7 +3,7 @@
 	tutorial = "You make your coin peddling exotic jewelry, gems, and shiny things."
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_races = RACES_ALL_KINDS
-	category_tags = list(CTAG_TRADER, CTAG_COURTAGENT, CTAG_LICKER_WRETCH)
+	category_tags = list(CTAG_PILGRIM, CTAG_COURTAGENT, CTAG_LICKER_WRETCH)
 	class_select_category = CLASS_CAT_TRADER
 	traits_applied = list(TRAIT_TRAINED_SMITH, TRAIT_SMITHING_EXPERT)
 	outfit = /datum/outfit/job/roguetown/adventurer/trader
@@ -21,6 +21,7 @@
 		/datum/skill/craft/blacksmithing = SKILL_LEVEL_EXPERT,
 		/datum/skill/craft/weaponsmithing = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/craft/crafting = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/craft/masonry = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/labor/mining = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/craft/smelting = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_NOVICE,
@@ -36,7 +37,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/shirt/tunic/purple
 	belt = /obj/item/storage/belt/rogue/leather/black
 	cloak = /obj/item/clothing/cloak/raincloak/purple
-	backl = /obj/item/storage/backpack/rogue/satchel
+	backl = /obj/item/storage/backpack/rogue/backpack
 	backr = /obj/item/storage/backpack/rogue/satchel
 	neck = /obj/item/storage/belt/rogue/pouch/coins/mid
 	beltl = /obj/item/flashlight/flare/torch/lantern
@@ -49,5 +50,12 @@
 		/obj/item/roguegem/yellow = 1,
 		/obj/item/roguegem/green = 1,
 		/obj/item/recipe_book/survival = 1,
-		/obj/item/rogueweapon/scabbard/sheath = 1
+		/obj/item/rogueweapon/chisel = 1,
+		/obj/item/carvedgem/rose/rawrose = 1,
+		/obj/item/roguegem/jade = 1,
+		/obj/item/roguegem/onyxa = 1,
+		/obj/item/roguegem/turq = 1,
+		/obj/item/roguegem/coral = 1,
+		/obj/item/roguegem/amber = 1,
+		/obj/item/roguegem/opal = 1
 		)
