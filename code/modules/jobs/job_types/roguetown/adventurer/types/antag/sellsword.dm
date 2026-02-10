@@ -17,10 +17,10 @@
 		STATKEY_CON = 2,	//-LCK +CON
 	)
 	subclass_skills = list(
-		/datum/skill/combat/polearms = SKILL_LEVEL_EXPERT,
-		/datum/skill/combat/swords = SKILL_LEVEL_EXPERT,
-		/datum/skill/combat/whipsflails = SKILL_LEVEL_EXPERT,
-		/datum/skill/combat/shields = SKILL_LEVEL_EXPERT,
+		/datum/skill/combat/polearms = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/combat/swords = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/combat/whipsflails = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/combat/shields = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/wrestling = SKILL_LEVEL_EXPERT,
 		/datum/skill/combat/axes = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/maces = SKILL_LEVEL_JOURNEYMAN,
@@ -51,31 +51,46 @@
 					/obj/item/flashlight/flare/torch = 1,
 					)
 	mask = /obj/item/clothing/mask/rogue/facemask/steel
-	neck = /obj/item/clothing/neck/roguetown/gorget
-	armor = /obj/item/clothing/suit/roguetown/armor/chainmail
+	neck = /obj/item/clothing/neck/roguetown/chaincoif
 	id = /obj/item/mattcoin
 	H.adjust_blindness(-3)
-	var/weapons = list("Spear & Shield","Sword & Shield","Flail & Crossbow","Duelist")
+	var/weapons = list("The Disgraced Watchman (Swords, Maces & Polearms)","The Mercenary (Maces & Shields)", "The Wayward Warden (Knives, Archery, Climbing & Athletics)")
 	if(H.mind)
-		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
+		var/weapon_choice = input(H, "Choose your expert-level proficiencies.", "HOW DOTH THOU WALK THROUGH LYFE, SELLSWORD?") as anything in weapons
 		H.set_blindness(0)
 		switch(weapon_choice)
-			if("Spear & Shield")//Deserter watchman.
-				backl= /obj/item/rogueweapon/shield/heater
-				r_hand = /obj/item/rogueweapon/spear/billhook
+			if("The Disgraced Watchman (Swords, Maces, Shields & Polearms)") 
+				backl = /obj/item/rogueweapon/scabbard/gwstrap
+				beltr = /obj/item/rogueweapon/mace/cudgel
+				r_hand = /obj/item/rogueweapon/halberd
+				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
 				head = /obj/item/clothing/head/roguetown/helmet/kettle
-			if("Sword & Shield")//Mercenary on the wrong side of the law
-				backl= /obj/item/rogueweapon/shield/iron
-				beltr = /obj/item/rogueweapon/sword
+				H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/shields, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
+			if("The Mercenary (Swords, Crossbows & Shields)") 
+				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 				beltl = /obj/item/rogueweapon/scabbard/sword
-				head = /obj/item/clothing/head/roguetown/helmet/sallet
-			if("Flail & Crossbow")//Wayward guardian.
-				backl= /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 				beltr = /obj/item/quiver/bolts
-				r_hand = /obj/item/rogueweapon/flail
-				head = /obj/item/clothing/head/roguetown/helmet/bascinet
-			if("Duelist")//Funny guy.
-				backl= /obj/item/rogueweapon/shield/buckler
-				beltr = /obj/item/rogueweapon/sword/falx
-				beltl = /obj/item/rogueweapon/scabbard/sword
-				head = /obj/item/clothing/head/roguetown/helmet/skullcap
+				r_hand = /obj/item/rogueweapon/sword/long/kriegmesser
+				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
+				head = /obj/item/clothing/head/roguetown/helmet/sallet
+				H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/shields, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_MASTER, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_EXPERT, TRUE)
+			if("The Wayward Warden (Axes, Archery, Sneaking, Climbing & Athletics)")
+				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
+				beltl = /obj/item/quiver/arrows
+				beltr = /obj/item/rogueweapon/stoneaxe/battle
+				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
+				head = /obj/item/clothing/head/roguetown/roguehood/warden
+				cloak = /obj/item/clothing/cloak/wardencloak
+				H.adjust_skillrank_up_to(/datum/skill/combat/knives, SKILL_LEVEL_JOURNEYMAN, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_MASTER, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/misc/climbing, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/misc/athletics, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/misc/sneaking, SKILL_LEVEL_EXPERT, TRUE)

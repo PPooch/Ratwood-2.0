@@ -233,6 +233,21 @@
 	cost = 20
 	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel)
 
+/datum/supply_pack/rogue/Brigand/placejapan
+	name = "Kazengunese Dagger"
+	cost = 35
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun)
+
+/datum/supply_pack/rogue/Brigand/parrydag
+	name = "Parry Dagger"
+	cost = 30
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/parrying)
+
+/datum/supply_pack/rogue/Brigand/saildagger
+	name = "Etruscan Sail Dagger"
+	cost = 50
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/parrying/vaquero)
+
 /datum/supply_pack/rogue/Brigand/mace
 	name = "Iron Mace"
 	cost = 10
@@ -318,25 +333,30 @@
 	cost = 20
 	contains = list(/obj/item/rogueweapon/whip)
 
-/datum/supply_pack/rogue/Brigand/placejapan
-	name = "Kazengunese Dagger"
-	cost = 35
-	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/kazengun)
-
-/datum/supply_pack/rogue/Brigand/parrydag
-	name = "Parry Dagger"
-	cost = 30
-	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/parrying)
-
-/datum/supply_pack/rogue/Brigand/saildagger
-	name = "Etruscan Sail Dagger"
-	cost = 50
-	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel/parrying/vaquero)
-
 /datum/supply_pack/rogue/Brigand/steelspear
 	name = "Steel Spear"
 	cost = 65
 	contains = list(/obj/item/rogueweapon/spear/boar)
+
+/datum/supply_pack/rogue/Brigand/billhook
+	name = "Billhook"
+	cost = 65
+	contains = list(/obj/item/rogueweapon/spear/billhook)
+
+/datum/supply_pack/rogue/Brigand/partizan
+	name = "Partizan"
+	cost = 70
+	contains = list(/obj/item/rogueweapon/spear/partizan)
+
+/datum/supply_pack/rogue/Brigand/ebeak
+	name = "Eagle's Beak"
+	cost = 70
+	contains = list(/obj/item/rogueweapon/eaglebeak)
+
+/datum/supply_pack/rogue/Brigand/halberd
+	name = "Halberd"
+	cost = 65
+	contains = list(/obj/item/rogueweapon/halberd)
 
 /datum/supply_pack/rogue/Brigand/lsword
 	name = "Knight's Longsword"
