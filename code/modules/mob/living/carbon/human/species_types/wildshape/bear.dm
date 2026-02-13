@@ -18,12 +18,12 @@
 		src.adjust_skillrank(/datum/skill/misc/swimming, 4, TRUE) //Bears are good swimmers
 		src.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
 
-		src.STASTR = 14 //Might be too high, but then again you're a bear, and you gotta wrestle
-		src.STACON = 11
-		src.STAWIL = 11
-		src.STAPER = 9
+		src.STASTR = 15 //Might be too high, but then again you're a bear, and you gotta wrestle
+		src.STACON = 10
+		src.STAWIL = 10
+		src.STAPER = 7
 		src.STASPD = 5 // You are a hulking mass of muscle, and this is for balance reasons
-		src.STAINT = 8
+		src.STAINT = 5
 
 		AddSpell(new /obj/effect/proc_holder/spell/self/bearclaws)
 		faction += "bears" // It IS a bear
