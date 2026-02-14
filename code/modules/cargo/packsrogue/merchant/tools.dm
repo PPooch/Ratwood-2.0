@@ -200,6 +200,11 @@
 	/obj/item/reagent_containers/glass/bottle/alchemical,/obj/item/reagent_containers/glass/bottle/alchemical,/obj/item/reagent_containers/glass/bottle/alchemical,
 	/obj/item/reagent_containers/glass/bottle/alchemical,/obj/item/reagent_containers/glass/bottle/alchemical,/obj/item/reagent_containers/glass/bottle/alchemical)
 
+/datum/supply_pack/rogue/tools/alch_bottlenormal
+	name = "Bottle"
+	cost = 3
+	contains = list(/obj/item/reagent_containers/glass/bottle/alchemical,)
+
 /datum/supply_pack/rogue/tools/alch_bottlesnormal
 	name = "Bulk Bottles" //
 	cost = 20

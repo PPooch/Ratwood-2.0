@@ -126,7 +126,7 @@
 
 /datum/supply_pack/rogue/alcohol/saigamilk
 	name = "Bökhiin Arkhi (Saiga Milk Drink)"
-	cost = 75
+	cost = 65
 	contains = list(/obj/item/reagent_containers/glass/bottle/rogue/beer/saigamilk)
 
 /datum/supply_pack/rogue/alcohol/kgunplum

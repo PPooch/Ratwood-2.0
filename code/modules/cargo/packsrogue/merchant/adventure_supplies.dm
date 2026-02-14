@@ -73,12 +73,12 @@
 
 /datum/supply_pack/rogue/adventure_supplies/woodstaff
 	name = "Six Foot Pole (Wooden Staff)"
-	cost = 5
+	cost = 6
 	contains = list(/obj/item/rogueweapon/woodstaff)
 
 /datum/supply_pack/rogue/adventure_supplies/quarterstaff
-	name = "Eight Foot Pole (Quarterstaff)"
-	cost = 10
+	name = "Eight Foot Pole "
+	cost = 12
 	contains = list(/obj/item/rogueweapon/woodstaff/quarterstaff)
 
 /datum/supply_pack/rogue/adventure_supplies/lamptern
@@ -93,7 +93,7 @@
 
 /datum/supply_pack/rogue/adventure_supplies/mess_kit
 	name = "Mess Kit"
-	cost = 50
+	cost = 60
 	contains = list(/obj/item/storage/gadget/messkit)
 
 /datum/supply_pack/rogue/adventure_supplies/needles

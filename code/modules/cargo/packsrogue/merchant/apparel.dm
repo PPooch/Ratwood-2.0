@@ -146,11 +146,3 @@
 					/obj/item/clothing/under/roguetown/trou,
 				)
 
-/datum/supply_pack/rogue/apparel/hair_dye
-	name = "Hair Dye Cream"
-	cost = 10
-	contains = list(
-					/obj/item/hair_dye_cream,
-					/obj/item/hair_dye_cream,
-					/obj/item/hair_dye_cream,
-				)
