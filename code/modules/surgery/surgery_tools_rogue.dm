@@ -232,9 +232,9 @@
 		to_chat(target, span_userdanger("[user] is trying to brand me with \the [src]!"))
 	else
 		user.visible_message(span_warning("[user] slowly wields \the [src] onto themselves."))
-	log_combat(user, target, "Attempts branding with writing: \"[setbranding]\"")
+	log_combat(user, target, "Branding attempt: \"[setbranding]\"")
 	if(!do_after(user, 5 SECONDS, target = A))
-		log_combat(user, target, "Branding aborted with writing: \"[setbranding]\"")
+		log_combat(user, target, "Branding aborted: \"[setbranding]\"")
 		return TRUE
 	if(!user.Adjacent(target))
 		return TRUE
@@ -307,7 +307,7 @@
 	update_heated(FALSE)
 	if(cool_timer)
 		deltimer(cool_timer)
-	log_combat(user, target, "Branded with writing: \"[setbranding]\"")
+	log_combat(user, target, "Branded successful: \"[setbranding]\"")
 	return TRUE
 
 /obj/item/rogueweapon/surgery/hammer
