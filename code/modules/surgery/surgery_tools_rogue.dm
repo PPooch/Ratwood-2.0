@@ -227,7 +227,8 @@
 	if(!istype(target))
 		to_chat(user, span_warning("I cannot brand \the [A]."))
 		return TRUE
-	if(user != target)
+	var/branding_self = user == target
+	if(!branding_self)
 		user.visible_message(span_warning("[user] slowly wields \the [src] towards [A]."))
 		to_chat(target, span_userdanger("[user] is trying to brand me with \the [src]!"))
 	else
@@ -242,17 +243,23 @@
 		return TRUE
 	if(!get_location_accessible(target, user.zone_selected))
 		to_chat(user, span_warning("There is clothes obsecuring the [lowertext(parse_zone(user.zone_selected))]."))
+		if(!branding_self)
+			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 		return TRUE
 	var/check_zone = check_zone(user.zone_selected)
 	var/obj/item/bodypart/branding_part = target.get_bodypart(check_zone)
 	if(!branding_part) //missing limb
 		to_chat(user, span_warning("Unfortunately, there's nothing there."))
+		if(!branding_self)
+			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 		return TRUE
 
 	if(user.zone_selected == BODY_ZONE_PRECISE_GROIN) // if targeting the groin, handle marking buttocks and genitals instead of a single chest zone
 		var/answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", list("Buttocks", "Loins", "Cancel"), 100)
 		if(!answer || answer == "Cancel")
 			to_chat(user, span_warning("I pull the iron away."))
+			if(!branding_self)
+				to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 			return TRUE
 		if(answer == "Buttocks")
 			var/obj/item/bodypart/chest/buttocks = branding_part
@@ -280,6 +287,8 @@
 			answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", available_loins, 100)
 			if(!answer || answer == "Cancel")
 				to_chat(user, span_warning("I pull the iron away."))
+				if(!branding_self)
+					to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 				return TRUE
 			switch(answer)
 				if("Cock")
@@ -309,6 +318,8 @@
 		var/answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", list("Head", "Mouth", "Neck", "Cancel"), 100)
 		if(!answer || answer == "Cancel")
 			to_chat(user, span_warning("I pull the iron away."))
+			if(!branding_self)
+				to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 			return TRUE
 		switch(answer)
 			if("Mouth")
@@ -350,6 +361,8 @@
 		to_chat(target, span_userdanger("You have been branded!"))
 	else
 		to_chat(user, span_warning("I pull the iron away."))
+		if(!branding_self)
+			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 		return TRUE
 
 	target.emote(prob(50) ? "painscream" : "scream", forced = TRUE)
