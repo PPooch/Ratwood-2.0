@@ -251,7 +251,7 @@
 	if(user.zone_selected == BODY_ZONE_PRECISE_GROIN) // if targeting the groin, handle marking buttocks and genitals instead of a single chest zone
 		if(alert("Brand their buttocks?",,"Yes", "No") == "Yes")
 			var/obj/item/bodypart/chest/buttocks = branding_part
-			if(QDELETED(buttocks) || !user.Adjacent(target) || !istype(buttocks)) // something went very wrong, abort
+			if(QDELETED(buttocks) || !user.Adjacent(target) || !istype(buttocks)) // body part no longer exists/moved away
 				return TRUE
 			if(length(buttocks.branded_writing_on_buttocks))
 				to_chat(user, span_warning("I reburn over the existing marking."))
@@ -264,21 +264,21 @@
 			if((penis && penis.visible_organ || vagina && vagina.visible_organ || testes && testes.visible_organ) && (alert("Brand their genitals?",, "Yes", "No") == "Yes"))
 				var/which_genitals = ""
 				if(penis && penis.visible_organ && alert("Brand their penis?",,"Yes", "No") == "Yes")
-					if(QDELETED(penis) || !user.Adjacent(target))
+					if(QDELETED(penis) || !user.Adjacent(target)) // body part no longer exists/moved away
 						return TRUE
 					if(length(penis.branded_writing))
 						to_chat(user, span_warning("I reburn over the existing marking."))
 					penis.branded_writing = setbranding
 					which_genitals = "cock"
 				else if(vagina && vagina.visible_organ && alert("Brand their pussy?",,"Yes", "No") == "Yes")
-					if(QDELETED(vagina) || !user.Adjacent(target))
+					if(QDELETED(vagina) || !user.Adjacent(target)) // body part no longer exists/moved away
 						return TRUE
 					if(length(vagina.branded_writing))
 						to_chat(user, span_warning("I reburn over the existing marking."))
 					vagina.branded_writing = setbranding
 					which_genitals = "pussy"
 				else if(testes && testes.visible_organ && alert("Brand their balls?",,"Yes", "No") == "Yes")
-					if(QDELETED(testes) || !user.Adjacent(target))
+					if(QDELETED(testes) || !user.Adjacent(target)) // body part no longer exists/moved away
 						return TRUE
 					if(length(testes.branded_writing))
 						to_chat(user, span_warning("I reburn over the existing marking."))
@@ -292,9 +292,9 @@
 				to_chat(user, span_warning("I pull the iron away."))
 				return TRUE
 		target.Knockdown(10)
-	else if(user.zone_selected == BODY_ZONE_PRECISE_NECK) // if targeting the neck, handle marking instead of generic head zone
+	else if(user.zone_selected == BODY_ZONE_PRECISE_NECK || user.zone_selected == BODY_ZONE_HEAD && alert("Brand their neck?",,"Yes", "No") == "Yes") // if targeting the head, ask to brand their neck, otherwise fallback to genetic body zone part
 		var/obj/item/bodypart/head/neck = branding_part
-		if(QDELETED(neck) || !istype(neck)) // something went very wrong, abort
+		if(QDELETED(neck) || !istype(neck) || !user.Adjacent(target)) // body part no longer exists/moved away
 			return TRUE
 		if(length(neck.branded_writing_on_neck))
 			to_chat(user, span_warning("I reburn over the existing marking."))
@@ -302,6 +302,8 @@
 		neck.branded_writing_on_neck = setbranding
 		target.Knockdown(10)
 	else // generic body part
+		if(QDELETED(branding_part) || !user.Adjacent(target)) // body part no longer exists/moved away
+			return TRUE
 		if(length(branding_part.branded_writing))
 			to_chat(user, span_warning("I reburn over the existing marking."))
 		user.visible_message(span_info("[target] writhes as \the [src] sears onto their [branding_part.name]! The fresh brand reads \"[setbranding]\"."))
