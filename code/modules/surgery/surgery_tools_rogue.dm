@@ -181,7 +181,7 @@
 
 /obj/item/rogueweapon/surgery/cautery/branding
 	name = "branding iron"
-	desc = "A symbol is well-writ on flesh. Heat it up before use."
+	desc = "A iron that is well-writ upon flesh. Heat it up before use."
 	icon_state = "brandingiron"
 	possible_item_intents = list(/datum/intent/use)
 	var/setbranding = null
@@ -234,7 +234,8 @@
 		user.visible_message(span_warning("[user] slowly wields \the [src] onto themselves."))
 
 	log_combat(user, target, "Branding attempt: \"[setbranding]\"")
-	if(!do_after(user, 5 SECONDS, target = A))
+	var/branding_delay = HAS_TRAIT(user, TRAIT_DUNGEONMASTER) ? 5 SECONDS : (HAS_TRAIT(user, TRAIT_KNOWNCRIMINAL) ? 7 SECONDS : 12 SECONDS) // criminals/dungeoneer burn faster, while non-criminals and towners take the longest time
+	if(!do_after(user, branding_delay, target = A))
 		log_combat(user, target, "Branding aborted: \"[setbranding]\"")
 		return TRUE
 	if(!user.Adjacent(target))
