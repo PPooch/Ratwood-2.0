@@ -276,6 +276,7 @@
 				to_chat(user, span_warning("I pull the iron away."))
 				return TRUE
 			user.visible_message(span_info("[target] writhes as \the [src] sears onto their [which_genitals]! The fresh brand reads \"[setbranding]\"."))
+			target.Knockdown(10)
 		else // fallback to burning their buttocks instead
 			if(alert("Brand their buttocks?",,"Yes", "No") != "Yes")
 				to_chat(user, span_warning("I pull the iron away."))
@@ -287,6 +288,7 @@
 				to_chat(user, span_warning("I reburn over the existing marking."))
 			user.visible_message(span_info("[target] writhes as \the [src] sears onto their hindquarters! The fresh brand reads \"[setbranding]\"."))
 			buttocks.branded_writing_on_buttocks = setbranding
+			target.Knockdown(10)
 	else if(user.zone_selected == BODY_ZONE_PRECISE_NECK) // if targeting the neck, handle marking instead of generic head zone
 		var/obj/item/bodypart/head/neck = branding_part
 		if(QDELETED(neck) || !istype(neck)) // something went very wrong, abort
@@ -295,6 +297,7 @@
 			to_chat(user, span_warning("I reburn over the existing marking."))
 		user.visible_message(span_info("[target] writhes as \the [src] sears onto their neck! The fresh brand reads \"[setbranding]\"."))
 		neck.branded_writing_on_neck = setbranding
+		target.Knockdown(10)
 	else // generic body part
 		if(length(branding_part.branded_writing))
 			to_chat(user, span_warning("I reburn over the existing marking."))
