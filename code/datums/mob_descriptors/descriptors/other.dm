@@ -76,7 +76,7 @@
 		used_name = "[adjective] [penis.name][arousal_modifier]"
 	var/branded = ""
 	if(length(penis.branded_writing))
-		branded = ", branded with the symbol [span_warning("\"[penis.branded_writing]\"")]"
+		branded = ", branded [span_warning("\"[penis.branded_writing]\"")]"
 	return "[used_name][branded]"
 
 /datum/mob_descriptor/testicles
@@ -116,7 +116,7 @@
 			adjective = "a large"
 	var/branded = ""
 	if(length(testes.branded_writing))
-		branded = ", branded with the symbol [span_warning("\"[testes.branded_writing]\"")]"
+		branded = ", branded [span_warning("\"[testes.branded_writing]\"")]"
 	return "[adjective] pair of balls[branded]"
 
 /datum/mob_descriptor/vagina
@@ -165,7 +165,7 @@
 			arousal_modifier = ", wet with arousal"
 	var/branded = ""
 	if(length(vagina.branded_writing))
-		branded = ", branded with the symbol [span_warning("\"[vagina.branded_writing]\"")]"
+		branded = ", branded [span_warning("\"[vagina.branded_writing]\"")]"
 	return "a [vagina_type][arousal_modifier][branded]"
 
 /datum/mob_descriptor/breasts
@@ -218,6 +218,9 @@
 			adjective = "a stomach-hiding"
 		if(12)
 			adjective = "a torso-sized"
+	var/branded = ""
+	if(length(breasts.branded_writing))
+		branded = ", branded [span_warning("\"[breasts.branded_writing]\"")]"
 	if(breasts.breast_size == 0)
-		return "[adjective]" 
-	return "[adjective] pair of breasts"
+		return "[adjective][branded]" 
+	return "[adjective] pair of breasts[branded]"

@@ -350,20 +350,38 @@
 				branding_part.branded_writing = setbranding
 				target.apply_damage(20, BURN, branding_part)
 				to_chat(target, span_userdanger("You have been branded!"))
-	else if (tgui_alert(user, "Brand their [branding_part.name]?", "Please answer in [DisplayTimeText(100)]!", list("Yes", "No"), 100) == "Yes") // generic body part
+	else
+		var/obj/item/organ/breasts/tits = null
+		if(check_zone == BODY_ZONE_CHEST) // targeting chest, check if target has breasts
+			tits = target.getorganslot(ORGAN_SLOT_BREASTS)
+			if(tits && !tits.is_visible()) // not shown, don't allow to be targeted
+				tits = null
+		var/answer
+		if(tits) // tits are avaialble, show as choice
+			answer = tgui_alert(user, "Brand them?", "Please answer in [DisplayTimeText(100)]!", list(capitalize(branding_part.name), "Tits", "Cancel"), 100)
+		else
+			answer = tgui_alert(user, "Brand their [lowertext(branding_part.name)]?", "Please answer in [DisplayTimeText(100)]!", list("Yes", "Cancel"), 100)
+		if(!answer || answer == "Cancel")
+			to_chat(user, span_warning("I pull \the [src] away."))
+			if(!branding_self)
+				to_chat(target, span_userdanger("[user] pulls \the [src] away."))
+			return TRUE
 		if(QDELETED(branding_part) || !istype(branding_part) || !user.Adjacent(target)) // body part no longer exists/moved away
 			return TRUE
-		if(length(branding_part.branded_writing))
-			to_chat(user, span_warning("I reburn over the existing marking."))
-		user.visible_message(span_info("[target] writhes as \the [src] sears onto their [branding_part.name]! The fresh brand reads \"[setbranding]\"."))
-		branding_part.branded_writing = setbranding
+		if(answer == "Tits")
+			if(QDELETED(tits) || !istype(tits)) // tits don't exist anymore
+				return TRUE
+			if(length(tits.branded_writing))
+				to_chat(user, span_warning("I reburn over the existing marking."))
+			user.visible_message(span_info("[target] writhes as \the [src] sears onto their breasts! The fresh brand reads \"[setbranding]\"."))
+			tits.branded_writing = setbranding
+		else // generic body part
+			if(length(branding_part.branded_writing))
+				to_chat(user, span_warning("I reburn over the existing marking."))
+			user.visible_message(span_info("[target] writhes as \the [src] sears onto their [branding_part.name]! The fresh brand reads \"[setbranding]\"."))
+			branding_part.branded_writing = setbranding
 		target.apply_damage(20, BURN, branding_part)
 		to_chat(target, span_userdanger("You have been branded!"))
-	else
-		to_chat(user, span_warning("I pull \the [src] away."))
-		if(!branding_self)
-			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
-		return TRUE
 
 	target.emote(prob(50) ? "painscream" : "scream", forced = TRUE)
 	target.Stun(40)
