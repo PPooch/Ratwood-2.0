@@ -317,7 +317,7 @@
 			return TRUE
 		switch(answer)
 			if("Mouth")
-				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] lips! The branding leaves an unrecognizable symbol."))
+				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] lips! The branding leaves an unrecognizable burn."))
 				target.apply_status_effect(/datum/status_effect/mouth_branded)
 				target.apply_damage(20, BURN, branding_part)
 				target.Knockdown(20)
