@@ -218,7 +218,7 @@
 		return ..()
 	if(!heated)
 		return ..()
-	if(!setbranding)
+	if(!setbranding || !length(setbranding))
 		to_chat(user, span_warning("There is nothing to brand, add some symbols before using again."))
 		return TRUE
 	if(!A || !ishuman(A))
