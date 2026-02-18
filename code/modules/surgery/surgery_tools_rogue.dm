@@ -255,6 +255,7 @@
 			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 		return TRUE
 
+	var/description_recoil = pick("recoils", "writhes", "thrashes", "suffers")
 	if(user.zone_selected == BODY_ZONE_PRECISE_GROIN) // if targeting the groin, handle marking buttocks and genitals instead of a single chest zone
 		var/answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", list("Buttocks", "Loins", "Cancel"), 100)
 		if(!answer || answer == "Cancel")
@@ -268,7 +269,6 @@
 				return TRUE
 			if(length(buttocks.branded_writing_on_buttocks))
 				to_chat(user, span_warning("I reburn over the existing marking."))
-			user.visible_message(span_info("[target] writhes as \the [src] sears [target.p_their()] [lowertext(answer)]! The fresh brand shows [span_boldwarning(setbranding)]."))
 			buttocks.branded_writing_on_buttocks = setbranding
 		else // ask if they want to brand genitals
 			var/obj/item/organ/penis/penis = target.getorganslot(ORGAN_SLOT_PENIS)
@@ -301,7 +301,7 @@
 					if(length(vagina.branded_writing))
 						to_chat(user, span_warning("I reburn over the existing marking."))
 					vagina.branded_writing = setbranding
-			user.visible_message(span_info("[target] writhes as \the [src] sears [target.p_their()] [lowertext(answer)]! The fresh brand shows [span_boldwarning(setbranding)]."))
+		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears [target.p_their()] [lowertext(answer)]! The fresh brand shows [span_boldwarning(setbranding)]."))
 		if(!QDELETED(branding_part) && istype(branding_part)) // if targeted body part still exists, apply damage
 			target.apply_damage(20, BURN, branding_part)
 		target.Knockdown(10)
@@ -317,7 +317,7 @@
 			return TRUE
 		switch(answer)
 			if("Mouth")
-				user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] lips! The branding leaves an unrecognizable symbol."))
+				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] lips! The branding leaves an unrecognizable symbol."))
 				target.apply_status_effect(/datum/status_effect/mouth_branded)
 				target.apply_damage(20, BURN, branding_part)
 				target.Knockdown(20)
@@ -328,7 +328,7 @@
 					return TRUE
 				if(length(neck.branded_writing_on_neck))
 					to_chat(user, span_warning("I reburn over the existing marking."))
-				user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] neck! The fresh brand shows [span_boldwarning(setbranding)]."))
+				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] neck! The fresh brand shows [span_boldwarning(setbranding)]."))
 				neck.branded_writing_on_neck = setbranding
 				target.apply_damage(20, BURN, neck)
 				target.Knockdown(10)
@@ -336,7 +336,7 @@
 			if("Head")
 				if(length(branding_part.branded_writing))
 					to_chat(user, span_warning("I reburn over the existing marking."))
-				user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
+				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
 				branding_part.branded_writing = setbranding
 				target.apply_damage(20, BURN, branding_part)
 				to_chat(target, span_userdanger("You have been branded!"))
@@ -363,12 +363,12 @@
 				return TRUE
 			if(length(tits.branded_writing))
 				to_chat(user, span_warning("I reburn over the existing marking."))
-			user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] breasts! The fresh brand shows [span_boldwarning(setbranding)]."))
+			user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] breasts! The fresh brand shows [span_boldwarning(setbranding)]."))
 			tits.branded_writing = setbranding
 		else // generic body part
 			if(length(branding_part.branded_writing))
 				to_chat(user, span_warning("I reburn over the existing marking."))
-			user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
+			user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
 			branding_part.branded_writing = setbranding
 		target.apply_damage(20, BURN, branding_part)
 		to_chat(target, span_userdanger("You have been branded!"))
