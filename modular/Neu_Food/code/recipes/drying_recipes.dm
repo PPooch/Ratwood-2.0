@@ -51,3 +51,12 @@
 	verbage = "drys"
 	craftdiff = 0
 	subtype_reqs = TRUE
+
+/datum/crafting_recipe/roguetown/cooking/fish
+	name = "dried fish filet"
+	reqs = list(
+		/obj/item/reagent_containers/food/snacks/rogue/meat/fish = 1,
+		/obj/item/reagent_containers/powder/salt = 1)
+	result = /obj/item/reagent_containers/food/snacks/rogue/meat/driedfishfilet
+	craftdiff = 0
+	structurecraft = /obj/machinery/tanningrack
