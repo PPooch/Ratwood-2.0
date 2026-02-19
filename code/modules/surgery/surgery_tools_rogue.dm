@@ -271,7 +271,7 @@
 			to_chat(target, span_userdanger("[user] pulls \the [src] away."))
 		return TRUE
 
-	var/description_recoil = pick("recoils", "writhes", "thrashes", "suffers")
+	var/description_recoil = target.stat < UNCONSCIOUS ? pick("recoils", "writhes", "thrashes", "suffers") : "lays still"
 	if(user.zone_selected == BODY_ZONE_PRECISE_GROIN) // if targeting the groin, handle marking buttocks and genitals instead of a single chest zone
 		var/answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", list("Buttocks", "Loins", "Cancel"), 100)
 		if(!answer || answer == "Cancel")
