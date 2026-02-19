@@ -116,7 +116,7 @@
 		if(do_after(user, short_cooktime, target = src))
 			playsound(get_turf(user), 'modular/Neu_Food/sound/eggbreak.ogg', 100, TRUE, -1)
 			name = "tender frybird with egg"
-			desc = "A frybard with an egg cracked over it. It awaits toastcrumbs and a hot oil bath."
+			desc = "A frybird with an egg cracked over it. It awaits toastcrumbs and a hot oil bath."
 			icon_state = "chickentender_step2"
 			process_step = 2
 			update_icon()
