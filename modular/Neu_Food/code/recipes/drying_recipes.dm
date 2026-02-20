@@ -59,7 +59,11 @@
 		/obj/item/reagent_containers/powder/salt = 1)
 	result = /obj/item/reagent_containers/food/snacks/rogue/meat/driedfishfilet
 	craftdiff = 0
+	skillcraft = /datum/skill/craft/cooking
+	verbage_simple = "dry"
+	verbage = "drys"	
 	structurecraft = /obj/machinery/tanningrack
+	req_table = FALSE
 
 /datum/crafting_recipe/roguetown/cooking/frybirdbucket
 	name = "frybird bucket"
