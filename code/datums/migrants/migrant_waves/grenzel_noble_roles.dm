@@ -56,7 +56,7 @@
 	beltl = /obj/item/rogueweapon/scabbard/sword
 	beltr = /obj/item/flashlight/flare/torch/lantern
 	backpack_contents = list(
-		/obj/item/storage/belt/rogue/pouch/coins/veryrich = 2,
+		/obj/item/storage/belt/pouch/coins/veryrich = 2,
 		/obj/item/reagent_containers/glass/bottle/alchemical/healthpotnew = 2,
 		/obj/item/rogueweapon/huntingknife/idagger = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
@@ -167,7 +167,7 @@
 	shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	beltl = /obj/item/flashlight/flare/torch/lantern
-	beltr = /obj/item/storage/belt/rogue/pouch/coins/veryrich
+	beltr = /obj/item/storage/belt/pouch/coins/veryrich
 	armor = /obj/item/clothing/suit/roguetown/shirt/robe/priest
 	cloak = /obj/item/clothing/cloak/chasuble
 	backl = /obj/item/storage/backpack/rogue/satchel
