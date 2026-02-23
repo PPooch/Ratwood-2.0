@@ -122,7 +122,7 @@
 			playsound(target, pick('sound/misc/mat/outercourse/gentle (1).ogg','sound/misc/mat/outercourse/gentle (2).ogg','sound/misc/mat/outercourse/gentle (3).ogg'), 10, TRUE, -2, ignore_walls = FALSE)
 		if(SEX_FORCE_MID)
 			if(wetness_layer)
-				playsound(target, pick('sound/misc/mat/outercourse/wetness (1).ogg','sound/misc/mat/outercourse/wetness (2).ogg','sound/misc/mat/outercourse/wetness (3).ogg'), 20, TRUE, -2, ignore_walls = FALSE)
+				playsound(target, pick('sound/misc/mat/outercourse/wetness (1).ogg','sound/misc/mat/outercourse/wetness (2).ogg','sound/misc/mat/outercourse/wetness (3).ogg'), 10, TRUE, -2, ignore_walls = FALSE)
 			playsound(target, pick('sound/misc/mat/outercourse/firm (1).ogg','sound/misc/mat/outercourse/firm (2).ogg','sound/misc/mat/outercourse/firm (3).ogg'), 30, TRUE, -2, ignore_walls = FALSE)
 		if(SEX_FORCE_HIGH)
 			if(wetness_layer)
