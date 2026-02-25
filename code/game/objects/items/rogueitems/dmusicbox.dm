@@ -7,7 +7,7 @@
 	extra_range = 10	// Up from 5, fill a room.
 	var/stress2give = /datum/stressevent/music
 	persistent_loop = TRUE
-	channel = CHANNEL_CMUSIC
+	channel = CHANNEL_CMUSIC1
 
 /datum/looping_sound/dmusloop/on_hear_sound(mob/M)
 	. = ..()
@@ -36,10 +36,17 @@
 	anvilrepair = /datum/skill/craft/blacksmithing
 
 /obj/item/dmusicbox/Initialize()
+	GLOB.musicboxes += src
 	soundloop = new(src, FALSE)
 //	soundloop.start()
 	update_icon()
 	. = ..()
+
+/obj/item/dmusicbox/Destroy()
+	GLOB.musicboxes.Remove(src)
+	playing = FALSE
+	soundloop.stop()
+	return ..()
 
 /obj/item/dmusicbox/update_icon()
 	if(playing)
@@ -114,6 +121,9 @@
 	playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
 	if(!playing)
 		if(curfile)
+			if(!find_free_channel())
+				to_chat(user, span_warning("TOO MANY MUSIC BOXES IN USE AT THE SAME TIME IN THE WORLD."))
+				return
 			playing = TRUE
 			soundloop.mid_sounds = list(curfile)
 			soundloop.cursound = null
@@ -122,3 +132,30 @@
 		playing = FALSE
 		soundloop.stop()
 	update_icon()
+
+/obj/item/dmusicbox/proc/find_free_channel()
+	var/free_channel = 1|2|4|8
+	for(var/obj/item/dmusicbox/musicbox in GLOB.musicboxes)
+		if(!musicbox.playing || musicbox.soundloop.stopped)
+			continue
+		switch(musicbox.soundloop.channel)
+			if(CHANNEL_CMUSIC1)
+				free_channel &= ~1
+			if(CHANNEL_CMUSIC2)
+				free_channel &= ~2
+			if(CHANNEL_CMUSIC3)
+				free_channel &= ~4
+			if(CHANNEL_CMUSIC4)
+				free_channel &= ~8
+	if(!free_channel) // no channels free, abort
+		return FALSE
+
+	if(free_channel&1)
+		soundloop.channel = CHANNEL_CMUSIC1
+	else if(free_channel&2)
+		soundloop.channel = CHANNEL_CMUSIC2
+	else if(free_channel&4)
+		soundloop.channel = CHANNEL_CMUSIC3
+	else if(free_channel&8)
+		soundloop.channel = CHANNEL_CMUSIC4
+	return TRUE
