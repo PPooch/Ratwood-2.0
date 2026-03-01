@@ -66,8 +66,8 @@
 			if("Cunning Archer") //Robin Hood-esque outfit with a funny hat and a green rain cloak.
 				head = /obj/item/clothing/head/roguetown/archercap
 				cloak = /obj/item/clothing/cloak/raincloak/green
-			if("Ruthless Hunter") //Bloodborne-esque outfit with a longcoat and a tricorn.
-				head = /obj/item/clothing/head/roguetown/helmet/tricorn
+			if("Ruthless Hunter") //Bloodborne-esque outfit with a longcoat and an oddly familiar hat.
+				head = /obj/item/clothing/head/roguetown/duelhat
 				cloak = /obj/item/clothing/suit/roguetown/armor/longcoat
 			if("Unrelenting Beastslayer") //Classic Poacher look with a dark green hood and a fur cloak.
 				head = /obj/item/clothing/head/roguetown/roguehood/darkgreen
