@@ -438,7 +438,7 @@
 	SEND_SIGNAL(user, COMSIG_MOB_EJACULATED)
 	log_combat(user, user, "Ejaculated")
 	user.visible_message(span_love("[user] makes a mess!"), vision_distance = (suppress_moan ? 1 : DEFAULT_MESSAGE_RANGE))
-	playsound(user, 'sound/misc/mat/endout.ogg', suppress_moan ? 15 : 50, TRUE, ignore_walls = FALSE,)
+	playsound(user, 'sound/misc/mat/endout.ogg', suppress_moan ? 12 : 50, TRUE, ignore_walls = FALSE)
 	var/obj/item/organ/testicles/testes = user.getorganslot(ORGAN_SLOT_TESTICLES)
 	add_cum_floor(get_turf(user), do_big_puddle = testes?.ball_size > DEFAULT_TESTICLES_SIZE)
 	after_ejaculation()
