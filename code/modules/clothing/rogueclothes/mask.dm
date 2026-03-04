@@ -543,6 +543,15 @@
 	salvage_result = /obj/item/natural/hide/cured
 	salvage_amount = 1
 
+/obj/item/clothing/mask/rogue/physician/equipped(mob/living/carbon/user, slot)
+	. = ..()
+	if(slot == SLOT_WEAR_MASK)
+		ADD_TRAIT(user, TRAIT_NOSTINK, "[type]")
+
+/obj/item/clothing/mask/rogue/physician/dropped(mob/living/carbon/user)
+	. = ..()
+	REMOVE_TRAIT(user, TRAIT_NOSTINK, "[type]")
+
 /obj/item/clothing/mask/rogue/skullmask
 	name = "skull mask"
 	desc = "A mask in the shape of a skull, designed to terrify."
