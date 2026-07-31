@@ -29,6 +29,7 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	var/preset = "matthios"
 	var/forced_preset = "" // If set, force a specific preset instead of randomizing.
 	var/never_goon = FALSE // If TRUE, this DK will not spawn goons on creation.
+	var/goons_spawned = FALSE
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/retaliate(mob/living/L)
 	var/newtarg = target
@@ -157,14 +158,20 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 	update_hair()
 	update_body()
 
+	def_intent_change(INTENT_PARRY)
+
+	if(!never_goon && isturf(loc))
+		spawn_goons()
+
+/// Escort spawn. Deferred when we start inside a quest stasis effect, since oview() finds nothing until we're on a turf.
+/mob/living/carbon/human/species/human/northern/deranged_knight/proc/spawn_goons()
+	if(goons_spawned)
+		return
+	goons_spawned = TRUE
+
 	var/list/possible_turfs = list()
 	for(var/turf/open/T in oview(2, src))
 		possible_turfs += T
-	
-	def_intent_change(INTENT_PARRY)
-
-	if(never_goon)
-		return
 
 	for(var/i in 1 to rand(2, 5))
 		var/turf/open/spawn_turf = pick_n_take(possible_turfs)
@@ -172,6 +179,11 @@ GLOBAL_LIST_INIT(hedgeknight_aggro, world.file2list("strings/rt/hedgeknightaggro
 			break
 
 		new /mob/living/carbon/human/species/human/northern/highwayman/dk_goon(spawn_turf)
+
+/mob/living/carbon/human/species/human/northern/deranged_knight/on_quest_release()
+	if(never_goon)
+		return
+	spawn_goons()
 
 /mob/living/carbon/human/species/human/northern/deranged_knight/npc_idle()
 	if(m_intent == MOVE_INTENT_SNEAK)

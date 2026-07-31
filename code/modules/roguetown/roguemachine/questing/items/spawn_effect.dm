@@ -45,12 +45,21 @@
 	I.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	flick_overlay_view(I, 5 SECONDS)
 
-	contained_atom.forceMove(get_turf(src))
+	var/atom/movable/released = contained_atom
+	released.forceMove(get_turf(src))
 	contained_atom = null
 
 	playsound(loc, "plantcross", 100, FALSE, 3)
 
+	if(isliving(released))
+		var/mob/living/L = released
+		L.on_quest_release()
+
 	qdel(src)
+
+/// Called on a quest mob once it has been moved out of stasis onto a turf. Override for spawn-time behavior that needs real neighbors.
+/mob/living/proc/on_quest_release()
+	return
 
 /obj/effect/quest_spawn/ex_act()
 	return
